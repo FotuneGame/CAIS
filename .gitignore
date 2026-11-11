@@ -1,0 +1,37 @@
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+terraform/*.tfplan
+terraform/terraform.tfvars
+terraform/crash*.log
+
+# Зависимости Helm скачиваются в charts/. Исключение — Vault и Vault Secrets
+# Operator: репозиторий helm.releases.hashicorp.com недоступен.
+k8s/*/charts/*
+!k8s/secret/charts/*.tgz
+
+# Данные сервисов, ключи и сертификаты. В Git — только .gitkeep трёх первых
+# уровней: глубже Git не заходит (данные баз большие, в них есть ссылки Linux).
+volumes/*
+!volumes/*/
+volumes/*/*
+!volumes/*/.gitkeep
+!volumes/README.md
+!volumes/*/*/
+volumes/*/*/*
+!volumes/*/*/.gitkeep
+!volumes/*/*/*/
+volumes/*/*/*/*
+!volumes/*/*/*/.gitkeep
+!volumes/app/*/train/*/
+volumes/app/*/train/*/*
+!volumes/app/*/train/*/.gitkeep
+
+**/__pycache__/
+
+.$Services.png.bkp
+.$Services.drawio.bkp
+
+screens

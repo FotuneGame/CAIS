@@ -1,0 +1,6 @@
+/dist
+/node_modules
+/app-data
+*.tsbuildinfo
+.env
+/app-data-test

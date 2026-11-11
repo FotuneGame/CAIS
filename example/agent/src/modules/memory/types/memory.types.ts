@@ -1,0 +1,1 @@
+export type MemoryKind = 'task';

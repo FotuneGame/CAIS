@@ -1,0 +1,4 @@
+kafka-ui:
+  envs:
+    config:
+      SERVER_SERVLET_CONTEXT_PATH: /dev/kafka

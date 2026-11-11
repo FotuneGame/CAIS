@@ -1,0 +1,11 @@
+redisinsight:
+  proxyPath: /stage/redis
+
+kibana:
+  configuration:
+    server:
+      basePath: /stage/kibana
+
+pgadmin4:
+  env:
+    contextPath: /stage/pgadmin

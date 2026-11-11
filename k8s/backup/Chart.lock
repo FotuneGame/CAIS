@@ -1,0 +1,9 @@
+dependencies:
+- name: k8up
+  repository: https://k8up-io.github.io/k8up
+  version: 4.10.0
+- name: minio
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 17.0.21
+digest: sha256:61f6d56d6d09e3bd1e45d49510bc48b46741a0113a97619d659346fa8ef64e6e
+generated: "2026-10-25T09:38:08.731443814+03:00"

@@ -1,0 +1,9 @@
+dependencies:
+- name: keycloak
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 25.2.0
+- name: oauth2-proxy
+  repository: https://oauth2-proxy.github.io/manifests
+  version: 10.7.2
+digest: sha256:86f6e037200639e3c02172cf6fe71ecfb02b8d45380fbf6b46a462c7e6fe2b5a
+generated: "2026-11-06T19:42:58.06869097+03:00"

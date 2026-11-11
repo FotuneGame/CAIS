@@ -1,0 +1,20 @@
+image: registry.local/main/cais-trace
+imagePullSecret: gitlab-registry
+replicas: 1
+dataDir: trace
+resources:
+  requests: { cpu: 25m, memory: 128Mi }
+  limits: { memory: 256Mi }
+
+env:
+  PUBLIC_URL: http://trace.app-{{ .Values.stage }}.svc.cluster.local
+  CLICKHOUSE_URL: http://clickhouse.db-{{ .Values.stage }}.svc.cluster.local:8123
+  KAFKA_BROKERS: kafka.mb-{{ .Values.stage }}.svc.cluster.local:9092
+  KEYCLOAK_ISSUERS: https://platform.local/{{ .Values.stage }}/keycloak/realms/master,http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master
+  KEYCLOAK_JWKS_URL: http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master/protocol/openid-connect/certs
+  KEEP_DAYS: "30"
+
+secretEnv:
+  CLICKHOUSE_USER: { secret: clickhouse-credentials, key: username }
+  CLICKHOUSE_DB: { secret: clickhouse-credentials, key: username }
+  CLICKHOUSE_PASSWORD: { secret: clickhouse-credentials, key: password }

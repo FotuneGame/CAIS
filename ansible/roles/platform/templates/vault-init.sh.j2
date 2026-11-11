@@ -1,0 +1,50 @@
+#!/bin/sh
+set -eu
+
+{% if platform_vault_keys is defined %}
+{% for key in platform_vault_keys[:3] %}
+vault operator unseal '{{ key }}' >/dev/null
+{% endfor %}
+{% endif %}
+export VAULT_TOKEN='{{ platform_vault_root }}'
+trap 'vault token revoke -self >/dev/null' EXIT
+
+vault auth list | grep -q '^kubernetes/' || vault auth enable kubernetes
+vault write auth/kubernetes/config kubernetes_host=https://kubernetes.default.svc
+vault secrets list | grep -q '^kv/' || vault secrets enable -path=kv kv-v2
+
+{% for namespace, secrets in platform_vault_secrets.items() %}
+vault policy write platform-{{ namespace }} - <<'EOF'
+{% for path in secrets.values() | map(attribute='path') | unique %}
+path "kv/data/{{ path }}" { capabilities = ["read"] }
+{% endfor %}
+EOF
+vault write auth/kubernetes/role/platform-{{ namespace }} \
+  bound_service_account_names=default \
+  bound_service_account_namespaces={{ namespace }} \
+  policies=platform-{{ namespace }} ttl=1h
+{% endfor %}
+
+vault policy write operator - <<'EOF'
+path "kv/data/*" { capabilities = ["create", "read", "update", "delete", "list"] }
+path "kv/metadata/*" { capabilities = ["read", "list", "delete"] }
+EOF
+vault auth list | grep -q '^userpass/' || vault auth enable userpass
+if ! vault read auth/userpass/users/admin >/dev/null 2>&1; then
+  printf '%s' '{{ platform_vault_admin_password }}' | vault write auth/userpass/users/admin password=- policies=operator
+  echo admin-created
+fi
+
+seed() {
+  vault kv get -mount=kv -field="$2" "$1" >/dev/null 2>&1 && return
+  if vault kv get -mount=kv "$1" >/dev/null 2>&1; then
+    vault kv patch -mount=kv "$1" "$2=-" >/dev/null
+  else
+    vault kv put -mount=kv "$1" "$2=-" >/dev/null
+  fi
+}
+{% for path, keys in platform_vault_seed.items() %}
+{% for key, value in keys.items() %}
+printf '%s' {{ (value if value is not none else lookup('ansible.builtin.password', '/dev/null length=32 chars=ascii_letters,digits')) | quote }} | seed {{ path }} {{ key }}
+{% endfor %}
+{% endfor %}

@@ -1,0 +1,134 @@
+{{- $llama := .Values.llama }}
+{{- $model := printf "%s-%s.gguf" $llama.model.name $llama.model.quantization }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: llama
+  template:
+    metadata:
+      labels:
+        app: llama
+    spec:
+      nodeSelector:
+        platform.node: llms
+      initContainers:
+        - name: download-model
+          image: curlimages/curl:8.12.1
+          command: ["/bin/sh", "-ec"]
+          args:
+            - |
+              if [ ! -s "/models/{{ $model }}" ]; then
+                curl --fail --location --retry 5 \
+                  "https://huggingface.co/{{ $llama.model.repository }}/resolve/main/{{ $model }}?download=true" \
+                  --output "/models/{{ $model }}.partial"
+                mv "/models/{{ $model }}.partial" "/models/{{ $model }}"
+              fi
+          volumeMounts:
+            - { name: models, mountPath: /models }
+      containers:
+        - name: llama
+          image: "{{ $llama.image.repository }}:{{ $llama.gpu.enabled | ternary $llama.gpu.imageTag $llama.image.tag }}"
+          args:
+            - --model
+            - /models/{{ $model }}
+            - --alias
+            - {{ $llama.model.name | quote }}
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8080"
+            - --ctx-size
+            - {{ $llama.contextSize | quote }}
+            {{- if not $llama.gpu.enabled }}
+            - -ngl
+            - "0"
+            {{- else if ne (toString $llama.gpu.layers) "auto" }}
+            - -ngl
+            - {{ $llama.gpu.layers | quote }}
+            {{- else }}
+            # Число слоёв на GPU llama.cpp подбирает по свободной VRAM (--fit), остальные — на CPU.
+            - --fit-target
+            - {{ $llama.gpu.fitTargetMiB | quote }}
+            {{- end }}
+            - --reasoning
+            - {{ $llama.thinking | ternary "on" "off" | quote }}
+            - --cache-ram
+            - {{ $llama.cacheRamMiB | quote }}
+            - --ctx-checkpoints
+            - {{ $llama.ctxCheckpoints | quote }}
+            - --metrics
+            {{- with $llama.apiPrefix }}
+            - --api-prefix
+            - {{ . }}
+            {{- end }}
+          ports:
+            - { name: http, containerPort: 8080 }
+          resources:
+            requests:
+              {{- toYaml $llama.resources.requests | nindent 14 }}
+            limits:
+              {{- toYaml $llama.resources.limits | nindent 14 }}
+              {{- if $llama.gpu.enabled }}
+              nvidia.com/gpu: 1
+              {{- if $llama.gpu.memoryMiB }}
+              nvidia.com/gpumem: {{ $llama.gpu.memoryMiB }}
+              {{- end }}
+              {{- end }}
+          # Загрузка модели в память — минуты: до 15 минут без перезапуска.
+          startupProbe:
+            httpGet: { path: "{{ $llama.apiPrefix }}/health", port: http }
+            periodSeconds: 10
+            failureThreshold: 90
+          readinessProbe:
+            httpGet: { path: "{{ $llama.apiPrefix }}/health", port: http }
+          livenessProbe:
+            httpGet: { path: "{{ $llama.apiPrefix }}/health", port: http }
+            periodSeconds: 20
+          volumeMounts:
+            - { name: models, mountPath: /models }
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: models-llama-0
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: models-llama-0
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local
+  volumeName: pv-{{ .Release.Namespace }}-llama
+  resources:
+    requests:
+      storage: {{ $llama.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama
+spec:
+  selector:
+    app: llama
+  ports:
+    - { name: http, port: 8080, targetPort: http }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: llama
+spec:
+  selector:
+    matchLabels:
+      app: llama
+  podMetricsEndpoints:
+    - port: http
+      path: "{{ $llama.apiPrefix }}/metrics"
+      interval: 30s

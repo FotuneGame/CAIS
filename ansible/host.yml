@@ -1,0 +1,5 @@
+---
+- name: Подготовка сервера
+  hosts: local
+  roles:
+    - host

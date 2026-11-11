@@ -1,0 +1,9 @@
+dependencies:
+- name: kafka
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 32.4.3
+- name: kafka-ui
+  repository: https://kafbat.github.io/helm-charts
+  version: 1.6.5
+digest: sha256:fc6bf4f8ddf629c3cb3b381bf85cacd839b40a9532f5d004df41c73599e7b247
+generated: "2026-10-24T18:53:51.953008953+03:00"

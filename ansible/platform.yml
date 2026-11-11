@@ -1,0 +1,5 @@
+---
+- name: Развёртывание платформы
+  hosts: local
+  roles:
+    - platform

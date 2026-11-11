@@ -1,0 +1,25 @@
+redisinsight:
+  proxyPath: /prod/redis
+
+kibana:
+  configuration:
+    server:
+      basePath: /prod/kibana
+
+pgadmin4:
+  env:
+    contextPath: /prod/pgadmin
+
+serviceDatabases:
+  databases:
+    gitlabhq_production:
+      secret: gitlab-db-credentials
+      extensions: [pg_trgm, btree_gist]
+
+postgresql:
+  primary:
+    # Миграции GitLab: иначе ERROR: out of shared memory.
+    extendedConfiguration: |
+      max_locks_per_transaction = 512
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }

@@ -1,0 +1,123 @@
+routes:
+  - { host: platform.local, path: /dev/pgadmin, namespace: db-dev, service: pgadmin, port: 80 }
+  - { host: platform.local, path: /dev/redis, namespace: db-dev, service: redisinsight, port: 5540 }
+  - { host: platform.local, path: /dev/clickhouse, stripPath: true, namespace: db-dev, service: clickhouse, port: 8123 }
+  - { host: platform.local, path: /dev/kibana, namespace: db-dev, service: kibana, port: 5601 }
+  - { host: platform.local, path: /dev/kafka, namespace: mb-dev, service: kafka-ui, port: 80 }
+  - { host: platform.local, path: /dev/keycloak, namespace: acl-dev, service: keycloak, port: 8080 }
+  - { host: platform.local, path: /dev/oauth2, namespace: acl-dev, service: oauth2-proxy, port: 80 }
+  - { host: platform.local, path: /dev/llama, namespace: llm-dev, service: llama, port: 8080 }
+  - host: platform.local
+    path: /dev/mcp
+    stripPath: true
+    namespace: app-dev
+    service: mcp
+    port: 80
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.acl-dev.svc.cluster.local/dev/oauth2/auth
+      nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+      nginx.ingress.kubernetes.io/limit-rps: "100"
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  - { host: platform.local, path: /stage/pgadmin, namespace: db-stage, service: pgadmin, port: 80 }
+  - { host: platform.local, path: /stage/redis, namespace: db-stage, service: redisinsight, port: 5540 }
+  - { host: platform.local, path: /stage/clickhouse, stripPath: true, namespace: db-stage, service: clickhouse, port: 8123 }
+  - { host: platform.local, path: /stage/kibana, namespace: db-stage, service: kibana, port: 5601 }
+  - { host: platform.local, path: /stage/kafka, namespace: mb-stage, service: kafka-ui, port: 80 }
+  - { host: platform.local, path: /stage/keycloak, namespace: acl-stage, service: keycloak, port: 8080 }
+  - { host: platform.local, path: /stage/oauth2, namespace: acl-stage, service: oauth2-proxy, port: 80 }
+  - { host: platform.local, path: /stage/llama, namespace: llm-stage, service: llama, port: 8080 }
+  - host: platform.local
+    path: /stage/mcp
+    stripPath: true
+    namespace: app-stage
+    service: mcp
+    port: 80
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.acl-stage.svc.cluster.local/stage/oauth2/auth
+      nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+      nginx.ingress.kubernetes.io/limit-rps: "100"
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  - { host: platform.local, path: /prod/pgadmin, namespace: db-prod, service: pgadmin, port: 80 }
+  - { host: platform.local, path: /prod/redis, namespace: db-prod, service: redisinsight, port: 5540 }
+  - { host: platform.local, path: /prod/clickhouse, stripPath: true, namespace: db-prod, service: clickhouse, port: 8123 }
+  - { host: platform.local, path: /prod/kibana, namespace: db-prod, service: kibana, port: 5601 }
+  - { host: platform.local, path: /prod/kafka, namespace: mb-prod, service: kafka-ui, port: 80 }
+  - { host: platform.local, path: /prod/keycloak, namespace: acl-prod, service: keycloak, port: 8080 }
+  - { host: platform.local, path: /prod/oauth2, namespace: acl-prod, service: oauth2-proxy, port: 80 }
+  - { host: platform.local, path: /prod/llama, namespace: llm-prod, service: llama, port: 8080 }
+  - host: platform.local
+    path: /prod/mcp
+    stripPath: true
+    namespace: app-prod
+    service: mcp
+    port: 80
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.acl-prod.svc.cluster.local/prod/oauth2/auth
+      nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+      nginx.ingress.kubernetes.io/limit-rps: "100"
+      nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  - { host: vault.local, namespace: secret, service: vault, port: 8200 }
+  - { host: grafana.local, namespace: logs, service: logs-grafana, port: 80 }
+  - { host: jaeger.local, namespace: logs, service: jaeger, port: 16686 }
+  - { host: argocd.local, namespace: cicd, service: argocd-server, port: 80 }
+  - host: registry.local
+    namespace: vcs
+    service: registry
+    port: 5000
+    # Образы большие: без ограничения размера и буферизации.
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "900"
+
+# Ingress, который создаёт chart GitLab (k8s/vcs).
+extraHosts: [gitlab.local]
+
+# Лимиты запросов: веб-интерфейсы загружают сотни файлов параллельно.
+annotations:
+  nginx.ingress.kubernetes.io/limit-rps: "100"
+  nginx.ingress.kubernetes.io/limit-burst-multiplier: "10"
+  nginx.ingress.kubernetes.io/limit-connections: "300"
+  nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+
+# Secret с сертификатом *.local создаёт Ansible в каждом namespace маршрутов и vcs.
+tlsSecret: local-wildcard-tls
+# ConfigMap с CA *.local (ключ ca.crt) создаёт Ansible в namespace proxy и cicd.
+caConfigMap: local-ca
+
+# Docker узлов не использует CoreDNS; /etc/hosts он пересоздаёт при запуске —
+# проверка каждые interval секунд.
+nodeHosts:
+  enabled: true
+  image: alpine:3.22
+  registries: [registry.local]
+  interval: 60
+
+ingress-nginx:
+  fullnameOverride: ingress-nginx
+  controller:
+    nodeSelector:
+      platform.node: core
+    replicaCount: 1
+    image:
+      digest: ""
+    service:
+      type: ClusterIP
+    ingressClassResource:
+      name: nginx
+      default: false
+    config:
+      ssl-redirect: "true"
+      use-forwarded-headers: "false"
+      proxy-body-size: "100m"
+      limit-req-status-code: "429"
+      limit-conn-status-code: "429"
+      client-header-timeout: "10"
+      client-body-timeout: "30"
+      keep-alive: "30"
+    metrics:
+      enabled: true

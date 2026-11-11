@@ -1,0 +1,15 @@
+keycloak:
+  httpRelativePath: /prod/keycloak/
+  externalDatabase:
+    host: postgresql.db-prod.svc.cluster.local
+
+oauth2-proxy:
+  extraArgs:
+    proxy-prefix: /prod/oauth2
+    redirect-url: https://platform.local/prod/oauth2/callback
+    oidc-issuer-url: https://platform.local/prod/keycloak/realms/master
+    login-url: https://platform.local/prod/keycloak/realms/master/protocol/openid-connect/auth
+    redeem-url: http://keycloak.acl-prod.svc.cluster.local:8080/prod/keycloak/realms/master/protocol/openid-connect/token
+    oidc-jwks-url: http://keycloak.acl-prod.svc.cluster.local:8080/prod/keycloak/realms/master/protocol/openid-connect/certs
+    extra-jwt-issuers: https://platform.local/prod/keycloak/realms/master=cais-ui,http://keycloak.acl-prod.svc.cluster.local:8080/prod/keycloak/realms/master=cais-ui
+    cookie-name: _oauth2_prod

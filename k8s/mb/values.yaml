@@ -1,0 +1,46 @@
+global:
+  imageRegistry: docker.io
+  security:
+    allowInsecureImages: true
+
+kafka:
+  fullnameOverride: kafka
+  image:
+    repository: bitnamilegacy/kafka
+  networkPolicy:
+    enabled: false
+  listeners:
+    client:
+      protocol: PLAINTEXT
+    controller:
+      protocol: PLAINTEXT
+    interbroker:
+      protocol: PLAINTEXT
+  # Один брокер: внутренние топики не могут иметь репликацию > 1.
+  overrideConfiguration:
+    offsets.topic.replication.factor: 1
+    transaction.state.log.replication.factor: 1
+    transaction.state.log.min.isr: 1
+    group.initial.rebalance.delay.ms: 0
+  controller:
+    replicaCount: 1
+    heapOpts: -Xmx256m -Xms256m
+    nodeSelector: { platform.node: core }
+    persistence:
+      storageClass: local
+      size: 5Gi
+    resources:
+      requests: { cpu: 100m, memory: 512Mi }
+  broker:
+    replicaCount: 0
+
+kafka-ui:
+  fullnameOverride: kafka-ui
+  envs:
+    config:
+      KAFKA_CLUSTERS_0_NAME: kafka
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      JAVA_OPTS: -Xmx192m
+  nodeSelector: { platform.node: core }
+  resources:
+    requests: { cpu: 25m, memory: 256Mi }

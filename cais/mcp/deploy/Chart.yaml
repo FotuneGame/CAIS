@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mcp
+description: "CAIS: MCP-сервер для веб-интерфейса llama.cpp"
+type: application
+version: 1.0.0

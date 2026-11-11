@@ -1,0 +1,70 @@
+argo-cd:
+  fullnameOverride: argocd
+  global:
+    domain: argocd.local
+    nodeSelector:
+      platform.node: core
+  configs:
+    cm:
+      url: https://argocd.local
+    # TLS завершается на ingress; иначе ERR_TOO_MANY_REDIRECTS.
+    params:
+      server.insecure: true
+  server:
+    resources: { requests: { cpu: 100m, memory: 256Mi } }
+  controller:
+    resources: { requests: { cpu: 100m, memory: 512Mi } }
+  repoServer:
+    resources: { requests: { cpu: 100m, memory: 256Mi } }
+  applicationSet:
+    resources: { requests: { cpu: 50m, memory: 128Mi } }
+  dex:
+    enabled: false
+  # Образ Docker Hub — через зеркало узлов (по умолчанию ecr-public.aws.com).
+  redis:
+    image:
+      repository: redis
+
+kyverno:
+  global:
+    nodeSelector:
+      platform.node: core
+  admissionController:
+    container:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+  backgroundController:
+    enabled: false
+  cleanupController:
+    enabled: false
+  reportsController:
+    enabled: false
+
+gitlab-runner:
+  nodeSelector:
+    platform.node: core
+  gitlabUrl: http://gitlab-webservice-default.vcs.svc.cluster.local:8181
+  concurrent: 2
+  rbac:
+    create: true
+  runners:
+    secret: gitlab-runner-credentials
+    config: |
+      [[runners]]
+        clone_url = "http://gitlab-webservice-default.vcs.svc.cluster.local:8181"
+        [runners.kubernetes]
+          namespace = "cicd"
+          image = "alpine:latest"
+          privileged = false
+          cpu_limit = "{{ .Values.jobLimits.cpu }}"
+          memory_limit = "{{ .Values.jobLimits.memory }}"
+          # CA *.local для docker login registry.local в задачах.
+          [[runners.kubernetes.volumes.config_map]]
+            name = "local-ca"
+            mount_path = "/etc/docker/certs.d/registry.local/ca.crt"
+            sub_path = "ca.crt"
+  jobLimits:
+    cpu: "1"
+    memory: 1Gi

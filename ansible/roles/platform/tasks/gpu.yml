@@ -1,0 +1,100 @@
+---
+- name: GPU по умолчанию выключен
+  ansible.builtin.set_fact:
+    platform_gpu_nodes: "{{ platform_tf.gpu_nodes }}"
+    platform_gpu: false
+    platform_llms_vram: 0
+    platform_gpu_hami: "{{ not platform_is_wsl | bool }}"
+
+- name: Узел llms
+  ansible.builtin.command: kubectl get nodes -l platform.node=llms -o jsonpath={.items[0].metadata.name}
+  changed_when: false
+  register: platform_llms_node
+
+- name: GPU в контейнерах узлов
+  ansible.builtin.command: >-
+    docker inspect --format '{{ '{{' }}json .HostConfig.DeviceRequests{{ '}}' }}' {{ platform_llms_node.stdout }}
+  changed_when: false
+  register: platform_node_devices
+
+- name: Device plugin GPU
+  when:
+    - platform_gpu_nodes | length > 0
+    - "'gpu' in platform_node_devices.stdout"
+  block:
+    - name: Отключение addon nvidia-device-plugin
+      ansible.builtin.shell: |
+        minikube addons disable nvidia-device-plugin --profile {{ platform_context }} >/dev/null
+        kubectl delete daemonset nvidia-device-plugin-daemonset -n kube-system --ignore-not-found
+      register: platform_gpu_addon
+      changed_when: "'deleted' in platform_gpu_addon.stdout"
+
+    - name: Настройки HAMi для узлов
+      ansible.builtin.set_fact:
+        platform_hami_nodes: >-
+          {{ platform_hami_nodes | default([]) + [{
+               'name': item.key,
+               'operatingmode': 'hami-core',
+               'devicememoryscaling': item.value.memory_scaling,
+               'devicesplitcount': 10,
+               'preconfigureddevicememory': 0,
+               'enablenumatopology': false,
+               'migstrategy': 'none',
+               'filterdevices': {'uuid': [], 'index': []},
+               'enablegetpreferredallocation': false}] }}
+      loop: "{{ platform_gpu_nodes | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}: {{ item.value.vram_mib }} МиБ"
+      when: platform_gpu_hami | bool
+
+    - name: Установка device plugin ({{ 'HAMi' if platform_gpu_hami | bool else 'NVIDIA, без лимита VRAM' }})
+      ansible.builtin.include_tasks: release.yml
+      vars:
+        release:
+          name: platform-gpu
+          chart: gpu
+          namespace: kube-system
+          args: >-
+            {{ ['--set', 'hami.enabled=' ~ (platform_gpu_hami | string | lower),
+                '--set', 'nvidia-device-plugin.enabled=' ~ ((not platform_gpu_hami | bool) | string | lower)]
+               + (['--set-json', 'hami.devicePlugin.nodeConfiguration.config='
+                   ~ ({'nodeconfig': platform_hami_nodes} | to_json | to_json)] if platform_gpu_hami | bool else []) }}
+
+    - name: Ожидание device plugin
+      ansible.builtin.command: >-
+        {{ platform_retry }} kube-system
+        kubectl rollout status daemonset/{{ 'hami-device-plugin' if platform_gpu_hami | bool else 'nvidia-device-plugin' }}
+        -n kube-system --timeout=10m
+      environment:
+        RETRY_ATTEMPTS: "{{ platform_wait_attempts }}"
+      changed_when: false
+
+    - name: Ожидание ресурса nvidia.com/gpu на узле llms
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - get
+          - node
+          - "{{ platform_llms_node.stdout }}"
+          - -o=jsonpath={.status.allocatable.nvidia\.com/gpu}
+      changed_when: false
+      register: platform_gpu_count
+      until: platform_gpu_count.stdout not in ['', '0']
+      retries: 24
+      delay: 5
+      when: platform_llms_node.stdout in platform_gpu_nodes
+
+    - name: GPU для llama.cpp
+      ansible.builtin.set_fact:
+        platform_gpu: true
+        platform_llms_vram: "{{ platform_gpu_nodes[platform_llms_node.stdout].vram_mib if platform_gpu_hami | bool else 0 }}"
+      when: platform_llms_node.stdout in platform_gpu_nodes
+  rescue:
+    - name: GPU недоступен в Ubuntu
+      ansible.builtin.fail:
+        msg: "Device plugin не зарегистрировал nvidia.com/gpu: проверьте драйвер и NVIDIA Container Toolkit."
+      when: not platform_is_wsl | bool
+
+    - name: GPU недоступен в WSL2
+      ansible.builtin.debug:
+        msg: "GPU не доступен Kubernetes в WSL2: llama.cpp работает на CPU."

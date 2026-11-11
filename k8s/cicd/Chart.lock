@@ -1,0 +1,12 @@
+dependencies:
+- name: kyverno
+  repository: https://kyverno.github.io/kyverno/
+  version: 3.9.1
+- name: argo-cd
+  repository: https://argoproj.github.io/argo-helm
+  version: 10.10.5
+- name: gitlab-runner
+  repository: https://charts.gitlab.io
+  version: 0.94.0
+digest: sha256:2202b008c5dffc1e2c5cbd386c1280a5ed050eae393606d4b3027ff0b2afe535
+generated: "2026-10-25T09:38:14.94365257+03:00"

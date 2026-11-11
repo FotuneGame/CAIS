@@ -1,0 +1,223 @@
+---
+- name: Проверка, что у каждого обязательного секрета есть начальное значение
+  ansible.builtin.assert:
+    that: missing | default('', true) | trim | length == 0
+    fail_msg: "Нет значений в platform_vault_seed для: {{ missing }}"
+  vars:
+    missing: >-
+      {% for secrets in platform_vault_secrets.values() -%}
+      {% for secret in secrets.values() if not secret.optional | default(false) and secret.path not in platform_vault_seed -%}
+      {{ secret.path }} {% endfor %}{% endfor %}
+
+- name: Параметры из Terraform
+  ansible.builtin.command: terraform -chdir={{ platform_repo }}/terraform output -json ansible
+  changed_when: false
+  register: platform_tf_raw
+
+- name: Узлы из Terraform
+  ansible.builtin.command: terraform -chdir={{ platform_repo }}/terraform output -json nodes
+  changed_when: false
+  register: platform_tf_nodes_raw
+
+- name: Разбор параметров Terraform
+  ansible.builtin.set_fact:
+    platform_tf: "{{ platform_tf_raw.stdout | from_json }}"
+    platform_tf_nodes: "{{ platform_tf_nodes_raw.stdout | from_json }}"
+
+- name: Выбор контекста kubectl
+  ansible.builtin.command: kubectl config use-context {{ platform_context }}
+  changed_when: false
+
+- name: Шифрование Secret в etcd включено
+  ansible.builtin.command: >-
+    kubectl get pod -n kube-system kube-apiserver-minikube
+    -o jsonpath={.spec.containers[0].command}
+  changed_when: false
+  register: platform_apiserver
+  failed_when: "'encryption-provider-config' not in platform_apiserver.stdout"
+
+- name: Ожидание сети подов
+  ansible.builtin.command: >-
+    {{ platform_retry }} kube-system
+    kubectl wait pod -n kube-system -l k8s-app=calico-node --for=condition=Ready --timeout=15m
+  environment:
+    RETRY_ATTEMPTS: "{{ platform_wait_attempts }}"
+  changed_when: false
+
+- name: Ожидание DNS кластера
+  ansible.builtin.shell: |
+    kubectl wait pod -n kube-system -l k8s-app=kube-dns --for=condition=Ready --timeout=2m && exit 0
+    kubectl rollout restart deployment/coredns -n kube-system
+    kubectl rollout status deployment/coredns -n kube-system --timeout=10m
+  changed_when: false
+
+- name: Зависимости charts
+  ansible.builtin.include_tasks: dependencies.yml
+
+- name: Namespaces, StorageClass и PersistentVolume
+  ansible.builtin.include_tasks: release.yml
+  vars:
+    release: { name: platform-foundation, chart: foundation, namespace: default }
+
+- name: TLS-сертификат ingress в namespace
+  ansible.builtin.shell: >-
+    kubectl create secret tls {{ platform_proxy_values.tlsSecret }} --namespace {{ item }}
+    --cert={{ platform_tls_dir }}/tls.crt --key={{ platform_tls_dir }}/tls.key
+    --dry-run=client -o yaml | kubectl apply -f -
+  loop: "{{ platform_tls_namespaces }}"
+  register: platform_tls_secret
+  changed_when: "'unchanged' not in platform_tls_secret.stdout"
+
+- name: Имена *.local и CA внутри кластера
+  ansible.builtin.include_tasks: dns.yml
+
+- name: Vault и Vault Secrets Operator
+  ansible.builtin.include_tasks: release.yml
+  vars:
+    release: { name: platform-secret, chart: secret, wait: false }
+
+- name: Инициализация и настройка Vault
+  ansible.builtin.include_tasks: vault.yml
+
+- name: Ожидание Vault Secrets Operator
+  ansible.builtin.command: >-
+    {{ platform_retry }} secret
+    kubectl rollout status deployment/vault-secrets-operator-controller-manager -n secret --timeout=10m
+  environment:
+    RETRY_ATTEMPTS: "{{ platform_wait_attempts }}"
+  changed_when: false
+
+- name: Ожидание секретов из Vault
+  ansible.builtin.shell: |
+    for secret in {{ platform_required_secrets }}; do
+      kubectl get secret -n "${secret%%/*}" "${secret#*/}" >/dev/null 2>&1 || { echo "$secret"; exit 1; }
+    done
+  changed_when: false
+  register: platform_secrets
+  until: platform_secrets.rc == 0
+  retries: 30
+  delay: 10
+
+- name: Ingress NGINX и маршруты *.local
+  ansible.builtin.include_tasks: release.yml
+  vars:
+    release: { name: platform-proxy, chart: proxy }
+
+- name: GPU для llama.cpp
+  ansible.builtin.include_tasks: gpu.yml
+
+- name: Необязательные секреты из Vault
+  ansible.builtin.shell: |
+    missing=""
+    for secret in $SECRETS; do
+      kubectl get secret -n "${secret%%/*}" "${secret#*/}" >/dev/null 2>&1 && continue
+      kubectl get vaultstaticsecret -n "${secret%%/*}" "${secret#*/}" -o json | kubectl replace --force -f - >/dev/null
+      missing="$missing $secret"
+    done
+    for _ in $(seq 15); do
+      [ -z "$missing" ] && break
+      sleep 2
+      for secret in $missing; do
+        kubectl get secret -n "${secret%%/*}" "${secret#*/}" >/dev/null 2>&1 || continue
+        echo "$secret"
+        missing=$(echo "$missing" | tr ' ' '\n' | grep -vx "$secret" | tr '\n' ' ' | xargs)
+      done
+    done
+  environment:
+    SECRETS: "{{ platform_optional_secrets }}"
+  register: platform_optional_synced
+  changed_when: platform_optional_synced.stdout | length > 0
+
+- name: Наличие токена GitLab Runner
+  ansible.builtin.command: kubectl get secret -n cicd gitlab-runner-credentials
+  changed_when: false
+  failed_when: false
+  register: platform_runner_secret
+
+- name: Включение GitLab Runner
+  ansible.builtin.set_fact:
+    platform_runner: "{{ platform_runner_secret.rc == 0 }}"
+
+- name: Восстановление ключей шифрования GitLab
+  ansible.builtin.shell: |
+    mkdir -p "$(dirname "$FILE")"
+    old="{{ platform_repo }}/volumes/vcs/gitlab-rails-secret.json"
+    [ -f "$old" ] && [ ! -f "$FILE" ] && mv "$old" "$FILE"
+    [ -f "$FILE" ] || exit 0
+    kubectl get secret -n vcs gitlab-rails-secret >/dev/null 2>&1 && exit 0
+    kubectl apply -f "$FILE" >/dev/null && echo restored
+  environment:
+    FILE: "{{ platform_gitlab_secret_file }}"
+  register: platform_gitlab_secret_restore
+  changed_when: "'restored' in platform_gitlab_secret_restore.stdout"
+
+- name: Состав db-prod до установки
+  ansible.builtin.shell: >-
+    helm get values db-prod -n db-prod -o json
+    | jq -r 'if has("allServices") then .allServices else true end'
+  changed_when: false
+  failed_when: false
+  register: platform_db_prod_values
+
+- name: Состав db-prod
+  ansible.builtin.set_fact:
+    platform_db_prod_all: "{{ 'prod' in platform_envs or platform_db_prod_values.stdout == 'true' }}"
+
+- name: Сервисы платформы и окружения {{ platform_envs | join(', ') }}
+  ansible.builtin.include_tasks: release.yml
+  loop: "{{ platform_releases }}"
+  loop_control:
+    loop_var: release
+    label: "{{ release.name }}"
+  when: release.env is not defined or release.env in platform_envs or release.shared | default(false)
+
+- name: PVC Alertmanager с коротким именем
+  ansible.builtin.shell: |
+    set -eu
+    old=alertmanager-logs-alertmanager-db-alertmanager-logs-alertmanager-0
+    kubectl get pvc -n logs "$old" >/dev/null 2>&1 || exit 0
+    kubectl delete statefulset -n logs alertmanager-logs-alertmanager --wait >/dev/null
+    kubectl delete pvc -n logs "$old" --timeout=2m >/dev/null
+    kubectl patch pv pv-logs-alertmanager --type merge -p '{"spec":{"claimRef":null}}' >/dev/null
+    until kubectl get statefulset -n logs alertmanager-logs-alertmanager >/dev/null 2>&1; do sleep 2; done
+    kubectl rollout status statefulset -n logs alertmanager-logs-alertmanager --timeout=5m >/dev/null
+    echo changed
+  register: platform_alertmanager_pvc
+  changed_when: "'changed' in platform_alertmanager_pvc.stdout"
+
+- name: Ключи шифрования GitLab из кластера
+  ansible.builtin.shell: >-
+    kubectl get secret -n vcs gitlab-rails-secret -o json
+    | jq '{apiVersion, kind, type, data, metadata: {name: .metadata.name, namespace: .metadata.namespace}}'
+  changed_when: false
+  register: platform_gitlab_secret
+  no_log: true
+
+- name: Копия ключей шифрования GitLab в volumes/
+  ansible.builtin.copy:
+    content: "{{ platform_gitlab_secret.stdout }}\n"
+    dest: "{{ platform_gitlab_secret_file }}"
+    mode: "0600"
+  no_log: true
+
+- name: Пароль администратора Argo CD из Vault
+  ansible.builtin.shell: |
+    set -eu
+    password=$(kubectl get secret -n cicd argocd-admin-credentials -o jsonpath='{.data.password}' | base64 -d)
+    sum=$(printf '%s' "$password" | sha256sum | cut -c1-64)
+    [ "$(kubectl get secret -n cicd argocd-secret -o jsonpath='{.metadata.annotations.platform/admin-password}')" = "$sum" ] && exit 0
+    hash=$(printf '%s\n' "$password" | kubectl exec -i -n cicd deploy/argocd-server -- \
+      sh -c 'IFS= read -r p; argocd account bcrypt --password "$p"')
+    kubectl patch secret -n cicd argocd-secret --type merge -p "$(jq -n --arg sum "$sum" --arg hash "$hash" '
+      {metadata: {annotations: {"platform/admin-password": $sum}},
+       stringData: {"admin.password": $hash, "admin.passwordMtime": (now | todate)}}')"
+    kubectl delete secret -n cicd argocd-initial-admin-secret --ignore-not-found
+    echo changed
+  register: platform_argocd_password
+  changed_when: "'changed' in platform_argocd_password.stdout"
+
+- name: Итог
+  ansible.builtin.debug:
+    msg: >-
+      Кластер развёрнут (окружения {{ platform_envs | join(', ') }}){{ '' if platform_runner else '; GitLab Runner выключен до записи
+      cicd/gitlab-runner в Vault' }}. Доступ из браузера: ./cluster.sh ports open.

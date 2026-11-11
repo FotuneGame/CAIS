@@ -1,0 +1,53 @@
+namespaces: [proxy, vcs, cicd, secret, backup, logs]
+
+environments:
+  names: [dev, stage, prod]
+  allowNamespaces: [logs, proxy]
+  # Доступ из namespaces к services; stop и delete окружения их не трогают.
+  usedBy:
+    db-prod: { namespaces: [vcs], services: [postgresql, redis] }
+  # Папки окружений:
+  #   node        — узел томов (по умолчанию core);
+  #   tolerations — toleration подов namespace (узел apps с taint);
+  #   volumes     — тома в volumes/<папка>/<env>/<path> (без path — весь каталог
+  #                 окружения) для PVC claim.
+  folders:
+    db:
+      volumes:
+        - { path: pg, claim: data-postgresql-0, size: 5Gi }
+        - { path: pgadmin, claim: pgadmin, size: 1Gi }
+        - { path: redis, claim: redis-data-redis-master-0, size: 2Gi }
+        - { path: ch, claim: data-clickhouse-shard0-0, size: 10Gi }
+        - { path: es, claim: data-elasticsearch-master-0, size: 10Gi }
+    mb:
+      volumes:
+        - { path: kafka, claim: data-kafka-controller-0, size: 5Gi }
+    llm:
+      node: llms
+      volumes:
+        - { path: llama, claim: models-llama-0, size: 20Gi }
+    acl: {}
+    app:
+      node: apps
+      tolerations: '[{"key":"workload","operator":"Equal","value":"apps","effect":"NoSchedule"}]'
+      volumes:
+        - { claim: app-data, size: 20Gi, accessMode: ReadWriteMany }
+
+# Тома общих сервисов в volumes/<path>; PV называется pv-<path через дефис>.
+#   claim      — namespace/имя PVC, к которому PV привязан заранее (у PVC,
+#                которые создают операторы, его нет: PV выбирается по
+#                volumeName или метке labels);
+#   node       — узел (по умолчанию core), accessMode — по умолчанию ReadWriteOnce;
+#   hostFiles  — файлы сервера (их пишет Ansible): PVC создаётся здесь же только
+#                для резервного копирования K8up, права каталога не меняются.
+volumes:
+  - { path: proxy/tls, claim: proxy/tls, size: 10Mi, hostFiles: true }
+  - { path: secret, claim: secret/data-vault-0, size: 2Gi }
+  - { path: vcs/registry, claim: vcs/data-registry-0, size: 10Gi }
+  - { path: vcs/minio, claim: vcs/minio, size: 10Gi }
+  - { path: vcs/gitaly, labels: { volume: gitaly }, size: 10Gi }
+  - { path: vcs/rails, claim: vcs/gitlab-rails-secret, size: 10Mi, hostFiles: true }
+  - { path: backups, claim: backup/minio, size: 50Gi }
+  - { path: logs/grafana, claim: logs/logs-grafana, size: 2Gi }
+  - { path: logs/prometheus, size: 10Gi }
+  - { path: logs/alertmanager, size: 1Gi }

@@ -1,0 +1,22 @@
+image: registry.local/main/cais-pre-training
+imagePullSecret: gitlab-registry
+replicas: 1
+dataDir: train
+resources:
+  requests: { cpu: 500m, memory: 1Gi }
+  limits: { memory: 3Gi }
+
+env:
+  APP_DATA_PATH: /app-data
+  LLAMA_THREADS: "2"
+  LLAMA_GPU_LAYERS: "0"
+  PUBLIC_URL: http://pre-training.app-{{ .Values.stage }}.svc.cluster.local
+  POSTGRES_HOST: postgresql.db-{{ .Values.stage }}.svc.cluster.local
+  KAFKA_BROKERS: kafka.mb-{{ .Values.stage }}.svc.cluster.local:9092
+  KEYCLOAK_ISSUERS: https://platform.local/{{ .Values.stage }}/keycloak/realms/master,http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master
+  KEYCLOAK_JWKS_URL: http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master/protocol/openid-connect/certs
+
+secretEnv:
+  POSTGRES_USER: { secret: postgresql-credentials, key: username }
+  POSTGRES_DB: { secret: postgresql-credentials, key: username }
+  POSTGRES_PASSWORD: { secret: postgresql-credentials, key: password }

@@ -1,0 +1,33 @@
+---
+- name: Charts с устаревшими зависимостями
+  ansible.builtin.shell: |
+    for chart in {{ platform_dependency_charts | join(' ') }}; do
+      dir="{{ platform_charts }}/$chart"
+      expected=$(helm dependency list "$dir" 2>/dev/null | awk 'NR > 1 && NF { print $1 "-" $2 ".tgz" }' | sort)
+      actual=$(find "$dir/charts" -maxdepth 1 -name '*.tgz' -printf '%f\n' 2>/dev/null | sort)
+      [ "$expected" = "$actual" ] || echo "$chart"
+    done
+  changed_when: false
+  register: platform_outdated_raw
+
+- name: Список устаревших charts
+  ansible.builtin.set_fact:
+    platform_outdated: "{{ platform_outdated_raw.stdout_lines }}"
+
+- name: Helm-репозитории из Chart.yaml
+  ansible.builtin.command: helm repo add {{ item | regex_replace('^https?://|/$', '') | regex_replace('[^a-zA-Z0-9]+', '-') }} {{ item }} --force-update
+  loop: >-
+    {{ query('ansible.builtin.file', *(platform_outdated | map('regex_replace', '^', platform_charts ~ '/')
+                                       | map('regex_replace', '$', '/Chart.yaml')))
+       | map('from_yaml') | map(attribute='dependencies') | flatten
+       | map(attribute='repository') | select('match', '^https://') | unique }}
+  changed_when: false
+
+- name: Загрузка зависимостей
+  ansible.builtin.shell: |
+    helm dependency build "$CHART" && exit 0
+    echo "Chart.lock устарел: helm dependency update $CHART"
+    helm dependency update "$CHART"
+  environment:
+    CHART: "{{ platform_charts }}/{{ item }}"
+  loop: "{{ platform_outdated }}"

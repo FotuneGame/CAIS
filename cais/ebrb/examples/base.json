@@ -1,0 +1,93 @@
+{
+  "attributes": [
+    {
+      "name": "danger",
+      "description": "насколько действие может навредить данным или системе: 0 — чтение, 0.5 — запись или запуск кода в песочнице, 1 — удаление, сеть, повышение прав",
+      "weight": 2,
+      "referential": [
+        0,
+        0.5,
+        1
+      ],
+      "required": true
+    },
+    {
+      "name": "sandbox",
+      "description": "действие остаётся внутри песочницы задачи: 1 — да, 0 — затрагивает внешние ресурсы",
+      "weight": 1,
+      "referential": [
+        0,
+        1
+      ],
+      "required": true
+    }
+  ],
+  "actions": [
+    {
+      "name": "list",
+      "description": "список файлов песочницы",
+      "safe": true
+    },
+    {
+      "name": "read",
+      "description": "чтение файла песочницы",
+      "safe": true
+    },
+    {
+      "name": "write",
+      "description": "запись файла в песочницу",
+      "safe": true
+    },
+    {
+      "name": "run",
+      "description": "команда sh в песочнице",
+      "safe": true
+    },
+    {
+      "name": "search",
+      "description": "поиск фактов EBRB",
+      "safe": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "safe",
+      "antecedents": {
+        "danger": 0,
+        "sandbox": 1
+      },
+      "consequent": {
+        "ALLOW": 1
+      }
+    },
+    {
+      "id": "inside",
+      "antecedents": {
+        "danger": 0.5,
+        "sandbox": 1
+      },
+      "consequent": {
+        "ALLOW": 0.8,
+        "BLOCK": 0.1
+      }
+    },
+    {
+      "id": "outside",
+      "antecedents": {
+        "sandbox": 0
+      },
+      "consequent": {
+        "BLOCK": 0.9
+      }
+    },
+    {
+      "id": "dangerous",
+      "antecedents": {
+        "danger": 1
+      },
+      "consequent": {
+        "BLOCK": 0.95
+      }
+    }
+  ]
+}

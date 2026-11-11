@@ -1,0 +1,10 @@
+appData:
+  claim: app-data
+  size: 20Gi
+  mountPath: /app-data
+  nameLabels:
+    - app.kubernetes.io/instance
+    - app.kubernetes.io/name
+    - app
+  defaultName: shared
+  initImage: busybox:1.37

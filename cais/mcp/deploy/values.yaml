@@ -1,0 +1,24 @@
+image: registry.local/main/cais-mcp
+imagePullSecret: gitlab-registry
+replicas: 1
+dataDir: mcp
+resources:
+  requests: { cpu: 25m, memory: 128Mi }
+  limits: { memory: 256Mi }
+
+env:
+  APP_DATA_PATH: /app-data
+  PUBLIC_URL: https://platform.local/{{ .Values.stage }}/mcp
+  POSTGRES_HOST: postgresql.db-{{ .Values.stage }}.svc.cluster.local
+  KAFKA_BROKERS: kafka.mb-{{ .Values.stage }}.svc.cluster.local:9092
+  KEYCLOAK_ISSUERS: https://platform.local/{{ .Values.stage }}/keycloak/realms/master,http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master
+  KEYCLOAK_JWKS_URL: http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master/protocol/openid-connect/certs
+  KEYCLOAK_TOKEN_URL: http://keycloak.acl-{{ .Values.stage }}.svc.cluster.local:8080/{{ .Values.stage }}/keycloak/realms/master/protocol/openid-connect/token
+  AGENTS: coder
+
+secretEnv:
+  POSTGRES_USER: { secret: postgresql-credentials, key: username }
+  POSTGRES_DB: { secret: postgresql-credentials, key: username }
+  POSTGRES_PASSWORD: { secret: postgresql-credentials, key: password }
+  KEYCLOAK_CLIENT_ID: { secret: cais-credentials, key: username }
+  KEYCLOAK_CLIENT_SECRET: { secret: cais-credentials, key: password }

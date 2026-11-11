@@ -1,0 +1,143 @@
+global:
+  imageRegistry: docker.io
+  security:
+    allowInsecureImages: true
+
+keycloak:
+  fullnameOverride: keycloak
+  image:
+    repository: bitnamilegacy/keycloak
+  service:
+    ports:
+      http: 8080
+  httpRelativePath: /
+  proxyHeaders: xforwarded
+  production: false
+  usePasswordFiles: false
+  networkPolicy:
+    enabled: false
+  auth:
+    existingSecret: keycloak-credentials
+    passwordSecretKey: password
+  postgresql:
+    enabled: false
+  externalDatabase:
+    port: 5432
+    database: keycloak
+    existingSecret: keycloak-db-credentials
+    existingSecretUserKey: username
+    existingSecretPasswordKey: password
+  extraEnvVars:
+    - { name: JAVA_OPTS_KC_HEAP, value: -Xms128m -Xmx512m }
+  # Запуск при загруженном узле дольше проверки liveness (2 минуты).
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 60
+  nodeSelector: { platform.node: core }
+  resources:
+    requests: { cpu: 100m, memory: 512Mi }
+    limits: { memory: 1Gi }
+  keycloakConfigCli:
+    enabled: true
+    image:
+      repository: bitnamilegacy/keycloak-config-cli
+    nodeSelector: { platform.node: core }
+    availabilityCheck:
+      timeout: 600s
+    extraEnvVars:
+      - { name: IMPORT_VARSUBSTITUTION_ENABLED, value: "true" }
+      - name: CAIS_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef: { name: cais-credentials, key: password }
+      - name: CAIS_UI_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef: { name: oauth2-credentials, key: client-secret }
+    configuration:
+      cais.json: |
+        {
+          "realm": "master",
+          "clients": [
+            {
+              "clientId": "cais",
+              "enabled": true,
+              "publicClient": false,
+              "secret": "$(env:CAIS_CLIENT_SECRET)",
+              "serviceAccountsEnabled": true,
+              "standardFlowEnabled": false,
+              "directAccessGrantsEnabled": false,
+              "attributes": { "access.token.lifespan": "3600" },
+              "protocolMappers": [
+                {
+                  "name": "cais-ui-audience",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-audience-mapper",
+                  "config": {
+                    "included.client.audience": "cais-ui",
+                    "access.token.claim": "true",
+                    "id.token.claim": "false"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "cais-ui",
+              "enabled": true,
+              "publicClient": false,
+              "secret": "$(env:CAIS_UI_CLIENT_SECRET)",
+              "serviceAccountsEnabled": false,
+              "standardFlowEnabled": true,
+              "directAccessGrantsEnabled": false,
+              "redirectUris": ["https://platform.local/*"],
+              "webOrigins": ["https://platform.local"],
+              "attributes": {
+                "access.token.lifespan": "3600",
+                "pkce.code.challenge.method": "S256",
+                "post.logout.redirect.uris": "https://platform.local/*"
+              },
+              "optionalClientScopes": ["offline_access"]
+            }
+          ]
+        }
+
+# Вход через Keycloak для mcp: k8s/proxy проверяет сессию через /<env>/oauth2/auth; адреса окружения — values-<env>.yaml.
+oauth2-proxy:
+  fullnameOverride: oauth2-proxy
+  image:
+    registry: quay.io
+  config:
+    existingSecret: oauth2-credentials
+    configFile: |
+      email_domains = ["*"]
+      upstreams = ["static://202"]
+  extraArgs:
+    reverse-proxy: true
+    provider: keycloak-oidc
+    skip-oidc-discovery: true
+    scope: openid offline_access
+    code-challenge-method: S256
+    oidc-email-claim: sub
+    insecure-oidc-allow-unverified-email: true
+    skip-provider-button: true
+    skip-jwt-bearer-tokens: true
+    set-authorization-header: true
+    cookie-path: /
+    cookie-secure: true
+    cookie-samesite: lax
+    cookie-expire: 720h
+    cookie-refresh: 50m
+    whitelist-domain: platform.local
+    silence-ping-logging: true
+  # Discovery внешнего издателя https://platform.local/... идёт через ingress: нужен CA *.local.
+  extraEnv:
+    - { name: SSL_CERT_FILE, value: /etc/local-ca/ca.crt }
+  extraVolumes:
+    - name: local-ca
+      configMap: { name: local-ca }
+  extraVolumeMounts:
+    - { name: local-ca, mountPath: /etc/local-ca, readOnly: true }
+  nodeSelector: { platform.node: core }
+  resources:
+    requests: { cpu: 10m, memory: 32Mi }
+    limits: { memory: 128Mi }
