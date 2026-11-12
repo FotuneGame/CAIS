@@ -1,0 +1,8 @@
+import "../../config/sandbox.config";
+import "../files/files.service";
+import "../shell/shell.service";
+import "../tools/tools.service";
+import "../../shared/core/types/roles.types";
+
+// providers — SandboxConfig, FilesService, ShellService, ToolsService; exports — FilesService, ToolsService
+export virtual class SandboxModule : IModule {}

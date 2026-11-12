@@ -1,0 +1,12 @@
+import "../actions/actions.service";
+import "../attributes/attributes.service";
+import "../base/base.service";
+import "./entity/action.entity";
+import "./entity/attribute.entity";
+import "./entity/rule.entity";
+import "./rulebase.controller";
+import "../rules/rules.service";
+import "../../shared/core/types/roles.types";
+
+// таблицы — AttributeEntity, ActionEntity, RuleEntity; controllers — RulebaseController; providers — AttributesService, ActionsService, RulesService, BaseService; exports — AttributesService, ActionsService, RulesService
+export virtual class RulebaseModule : IModule {}

@@ -1,0 +1,29 @@
+{
+  "about": "Проверка входных данных: class-validator и class-transformer",
+  "language": "typescript",
+  "mentions": [
+    "validator",
+    "проверк",
+    "валидац",
+    "входн"
+  ],
+  "packages": {
+    "class-validator": {
+      "version": "^0.15.1",
+      "url": "https://registry.npmjs.org/class-validator",
+      "about": "Проверка входных данных: class-validator и class-transformer",
+      "requires": [
+        "class-transformer"
+      ]
+    },
+    "class-transformer": {
+      "version": "^0.5.1",
+      "url": "https://registry.npmjs.org/class-transformer",
+      "about": "Проверка входных данных: class-validator и class-transformer"
+    }
+  },
+  "rules": [
+    "Входные данные запроса — входные данные запроса: каждое поле проверяется по типу → декораторы class-validator: string — @IsString(), number из int — @IsInt(), из float и double — @IsNumber(), boolean — @IsBoolean(), объект — @IsObject(), массив — @IsArray(), enum — @IsEnum(Тип); необязательное поле — @IsOptional(); поле-класс — @ValidateNested() и @Type(() => Класс) из class-transformer; в комментарии поля: «от a до b» для числа — @Min(a) и @Max(b), только «от a» — @Min(a), только «до b» — @Max(b), «длина от a до b» — @Length(a, b), для массива — @ArrayMinSize(a) и @ArrayMaxSize(b), «одно из a, b» — @IsIn([a, b]), «шаблон выражение» — @Matches(new RegExp('выражение')), «uuid» — @IsUUID()",
+    "validated — validated(Класс, данные) — объект класса из данных после проверки; ошибки проверки — исключение с сообщениями через «; » → plainToInstance из class-transformer и validate(объект, { whitelist: true }) из class-validator; сообщения — constraints всех ошибок, включая вложенные children"
+  ]
+}

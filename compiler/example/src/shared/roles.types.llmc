@@ -1,0 +1,15 @@
+// Работа с сущностями базы данных: запись таблицы TypeORM, имя таблицы — в комментарии класса
+export virtual interface IDBEntity;
+// Входные данные сетевого запроса с проверкой полей (class-validator)
+export virtual interface IDto;
+// Работа с сервисами NestJS: принимают данные от контроллеров, зависимости получают через конструктор
+export virtual interface IService;
+// Работа с контроллерами NestJS: сетевые запросы HTTP по заданным путям с проверкой входных данных
+export virtual interface IController;
+// Модуль приложения NestJS: состав — в комментарии класса
+export virtual interface IModule;
+
+export interface ICRUD<Entity, Input> {
+  promise<Entity[]> list();
+  promise<Entity> add(Input input);
+}

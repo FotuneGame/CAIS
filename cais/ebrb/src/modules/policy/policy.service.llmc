@@ -1,0 +1,16 @@
+import "../inference/inference.functions";
+import "../inference/types/policy.types";
+import "../inference/types/thresholds.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class PolicyService : IService {
+  // hypothesis и top — гипотеза с наибольшим убеждением и его значение (нет гипотез — null и 0);
+  // состояние — «βmax = <top>, βΘ = <ignorance>, C = <conflict>» с двумя знаками после запятой.
+  // approved(top, ignorance, conflict, safe, t) — { decision: 'APPROVE', hypothesis,
+  // reason: «<состояние>, действие <action> безопасно» }.
+  // Иначе refine(ignorance, conflict, t) — { decision: 'REFINE', hypothesis, reason: «нужно больше данных: <состояние>» }.
+  // Иначе { decision: 'ESCALATE', hypothesis, reason: «нужна проверка человеком: <причина>; <состояние>» },
+  // причина: при safe — «βmax < <t.confidence>», иначе «действие <action или —> не в A_safe».
+  virtual Policy decide(HashMap<string, double> belief, double ignorance, double conflict, string? action, bool safe, Thresholds t);
+}

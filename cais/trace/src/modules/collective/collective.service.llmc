@@ -1,0 +1,23 @@
+import "../causal/causal.service";
+import "../information/information.service";
+import "../macie/types/causalmodel.types";
+import "../macie/types/collective.types";
+import "../macie/types/history.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class CollectiveService : IService {
+  InformationService information;
+  CausalService causal;
+  // outcome — функция исхода коалиции Y(C), A — все агенты.
+  // σ_ij = Y(A) − Y(A∖{i, j}) − φ_i − φ_j для каждой пары i < j: { pair: [агент i, агент j], sigma }.
+  // SI = (Y(A) − Σ Y({i})) / max(|Y(A)|, |Σ Y({i})|); нулевой знаменатель — 0.
+  // Вернуть { si, cs: coordination, ii: integration, interactions: пары с |σ| > threshold, synergy: все пары }.
+  virtual Collective measure(History history, CausalModel model, Handler outcome, double[] phi, double threshold);
+  // CS = 1/(T−1) Σ Corr(a_t, a_{t−1}): действия шага кодируются единицами по пространствам действий агентов;
+  // меньше двух шагов — 0
+  virtual double coordination(History history, CausalModel model);
+  // II = Σ_{i≠j} I(a_i; a_j | Pa(a_i, a_j)): условие — causal.key(объединение родителей i и j по возрастанию,
+  // состояние шага, действия предыдущего шага), ряды — со второго шага; меньше двух шагов — 0
+  virtual double integration(History history, CausalModel model);
+}

@@ -1,0 +1,9 @@
+export class AgentEffect {
+  string agent;
+  double phi;
+  double ate;
+  double share;
+  double[] ci;
+  double counterfactual;
+  string[] critical;
+}

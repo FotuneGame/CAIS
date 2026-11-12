@@ -1,0 +1,7 @@
+import "../shared/core/types/roles.types";
+export virtual class ElasticConfig : IConfig {
+  // окружение ELASTICSEARCH_URL, по умолчанию "http://localhost:9200"
+  const string url;
+  // окружение ELASTICSEARCH_INDEX, по умолчанию "cais-facts"
+  const string index;
+}

@@ -1,0 +1,10 @@
+import "./actioninput.dto";
+import "./attributeinput.dto";
+import "./ruleinput.dto";
+import "../../../shared/core/types/roles.types";
+
+export virtual class BaseInputDto : IDto {
+  AttributeInputDto[] attributes = {};
+  ActionInputDto[] actions = {};
+  RuleInputDto[] rules = {};
+}

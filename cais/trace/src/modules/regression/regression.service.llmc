@@ -1,0 +1,9 @@
+import "../../shared/core/types/roles.types";
+export virtual class RegressionService : IService {
+  // Веса линейной модели y ≈ x·w: нормальные уравнения (XᵀX + λI)w = Xᵀy, λ по умолчанию 1e-3,
+  // решение методом Гаусса — Жордана с выбором главного элемента; ведущий элемент меньше 1e-12 — вес 0.
+  // Пустой x — пустой список весов.
+  virtual double[] fit(double[][] x, double[] y, double lambda = 0.001);
+  virtual double predict(double[] weights, double[] row);
+  virtual double r2(double[] weights, double[][] x, double[] y);
+}

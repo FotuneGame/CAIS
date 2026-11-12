@@ -1,0 +1,12 @@
+import "../../../shared/core/types/roles.types";
+export virtual class AttributeInputDto : IDto {
+  // шаблон ^[a-z][a-z0-9_]{1,49}$
+  string name;
+  // длина от 1 до 500
+  string description;
+  // от 0
+  double weight = 1.0;
+  // длина от 2 до 100
+  double[] referential = {0.0, 0.5, 1.0};
+  bool required = true;
+}

@@ -1,0 +1,23 @@
+import "../facts/facts.service";
+import "../rulebase/types/attributedata.types";
+import "../../shared/injection/injection.service";
+import "../../shared/llm/llm.service";
+import "../../shared/prompts/prompts.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ExtractionService : IService {
+  LlmService llm;
+  PromptsService prompts;
+  FactsService facts;
+  InjectionService injection;
+  // Атрибутов нет — вернуть {}. Список атрибутов: строки
+  // «- <name>: <description>, диапазон <первое referential>..<последнее referential>».
+  // Проверенные факты: facts.search(первые 500 символов input, 3, true), ошибка поиска — фактов нет;
+  // тексты hits через пустую строку.
+  // Сообщение user: «Ситуация:» и с новой строки injection.asData(input), а если факты есть — ещё пустая строка,
+  // «Проверенные факты:» и с новой строки injection.asData(факты).
+  // ответ = await llm.chat([{ role: 'system', content: prompts.text('extract', { attributes: список }) },
+  // { role: 'user', content }]); вернуть ответ.attributes или {}.
+  virtual promise<Dict> extract(string input, AttributeData[] attributes);
+}

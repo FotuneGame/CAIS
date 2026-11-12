@@ -1,0 +1,6 @@
+export class FactsInfo {
+  string title;
+  int chunks;
+  bool injection;
+  bool reviewed;
+}

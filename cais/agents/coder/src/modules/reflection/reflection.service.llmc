@@ -1,0 +1,21 @@
+import "../agent/types/goal.types";
+import "../agent/types/review.types";
+import "../agent/types/step.types";
+import "../goals/goals.service";
+import "../../shared/injection/injection.service";
+import "../../shared/llm/llm.service";
+import "../../shared/prompts/prompts.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class ReflectionService : IService {
+  LlmService llm;
+  PromptsService prompts;
+  GoalsService goals;
+  InjectionService injection;
+  // След шагов: строки «<tool>(<JSON args>) -> <первые 300 символов output>».
+  // Отчёт через пустую строку: goals.describe(goal); «Шаги:» и с новой строки injection.asData(след или '(нет)');
+  // «Ответ агента:» и с новой строки injection.asData(answer).
+  // ответ = await llm.chat([{ role: 'system', content: prompts.text('check') }, { role: 'user', content: отчёт }]);
+  // вернуть { passed: ответ.passed === true, note: ответ.note, если строка, иначе '' }.
+  virtual promise<Review> check(Goal goal, string answer, Step[] steps);
+}

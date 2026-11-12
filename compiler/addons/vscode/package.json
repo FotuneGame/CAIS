@@ -1,0 +1,35 @@
+{
+  "name": "llmc",
+  "displayName": "LLMC",
+  "description": "Подсветка синтаксиса языка LLMC",
+  "version": "1.2.0",
+  "publisher": "cais",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "llmc",
+        "aliases": [
+          "LLMC",
+          "llmc"
+        ],
+        "extensions": [
+          ".llmc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "llmc",
+        "scopeName": "source.llmc",
+        "path": "./syntaxes/llmc.tmLanguage.json"
+      }
+    ]
+  }
+}

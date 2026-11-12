@@ -1,0 +1,8 @@
+import "../macie.functions";
+
+export class Step {
+  string time;
+  string state;
+  string[] actions;
+  double reward;
+}

@@ -1,0 +1,10 @@
+import "../train/entity/model.entity";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// зависимость models: table<ModelEntity> — Repository<E> из typeorm
+export virtual class ModelsService : IService {
+  virtual promise<void> save(Dict model);
+  virtual promise<ModelEntity?> find(string name);
+  virtual promise<ModelEntity[]> list();
+}

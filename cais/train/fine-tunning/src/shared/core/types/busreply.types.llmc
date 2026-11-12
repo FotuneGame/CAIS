@@ -1,0 +1,7 @@
+import "./base.types";
+export class BusReply {
+  string id;
+  bool ok;
+  Any? data;
+  string? error;
+}

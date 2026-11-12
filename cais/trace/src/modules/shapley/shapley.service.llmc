@@ -1,0 +1,12 @@
+import "../macie/macie.functions";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ShapleyService : IService {
+  // Коалиции из others: все 2^|others| подмножеств, если m не задан или не меньше их числа; иначе до m разных
+  // случайных подмножеств (каждый агент входит с вероятностью 0.5, не больше 20·m попыток)
+  virtual int[][] coalitions(int[] others, int? m, Handler rng);
+  // φ_i = Σ_C w(C)·[v(C ∪ {i}) − v(C)] / Σ_C w(C), w(C) = coalitionWeight(|C|, n), value — функция v(C).
+  // При n ≤ 10 — все коалиции (m не используется), иначе выборка из m коалиций; сумма весов 0 — вклад 0.
+  virtual double[] compute(int n, Handler value, int? m, Handler rng);
+}

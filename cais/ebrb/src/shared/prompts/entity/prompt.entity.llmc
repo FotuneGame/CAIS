@@ -1,0 +1,11 @@
+import "../../core/types/roles.types";
+// Таблица agent_prompts
+export virtual class PromptEntity : IDBEntity {
+  // идентификатор
+  string agent;
+  // идентификатор
+  string name;
+  string text;
+  // изменено
+  date updatedAt;
+}

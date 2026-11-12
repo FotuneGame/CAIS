@@ -1,0 +1,15 @@
+import "../apriori/types/itemset.types";
+import "../apriori/types/matrix.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ItemsetsService : IService {
+  virtual double support(HashSet<string>[] observations, string[] items);
+  // Алгоритм Apriori по уровням: первый уровень — одиночные факторы с supp ≥ minSupport; следующий уровень —
+  // объединения двух наборов уровня, дающие набор на один фактор больше, все подмножества которого на один
+  // фактор меньше — частые; оставить наборы с supp ≥ minSupport; размер набора не больше maxSize.
+  // Вернуть все частые наборы по убыванию поддержки.
+  virtual Itemset[] frequent(HashSet<string>[] observations, string[] factors, double minSupport, int maxSize);
+  virtual Matrix matrix(HashSet<string>[] observations, string[] factors);
+  virtual Dict graph(Matrix matrix, double minSupport);
+}

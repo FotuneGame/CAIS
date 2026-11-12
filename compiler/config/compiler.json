@@ -1,0 +1,19 @@
+{
+  "tokens": "tokens.def",
+  "grammar": "grammar.def",
+  "ontologies": "ontologies",
+  "output": {
+    "ir": "build/ir",
+    "code": "build/code",
+    "bin": "build/bin"
+  },
+  "repairs": 3,
+  "targets": {
+    "typescript": {
+      "manifest": "package.json",
+      "install": "npm install --no-audit --no-fund",
+      "script": "npm run {name}",
+      "output": "dist"
+    }
+  }
+}

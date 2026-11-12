@@ -1,0 +1,8 @@
+import "../../../shared/core/types/roles.types";
+export virtual class EventFilterDto : IDto {
+  string? agent;
+  // от 1 до 10080
+  int? minutes;
+  // от 1 до 10000
+  int? limit;
+}

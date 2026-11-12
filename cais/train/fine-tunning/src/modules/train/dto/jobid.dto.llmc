@@ -1,0 +1,5 @@
+import "../../../shared/core/types/roles.types";
+export virtual class JobIdDto : IDto {
+  // uuid
+  string id;
+}

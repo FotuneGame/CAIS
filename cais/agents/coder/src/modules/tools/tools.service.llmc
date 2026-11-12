@@ -1,0 +1,17 @@
+import "../files/files.service";
+import "../sandbox/types/tool.types";
+import "../shell/shell.service";
+import "../../shared/bus/client.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ToolsService : IService {
+  FilesService files;
+  ShellService shell;
+  BusClientService bus;
+  // Объединить files.tools(root) и shell.tools(root).
+  // Если bus.enabled() — добавить search: args ['query'], описание «поиск по базе знаний (документация, примеры кода)».
+  // search: ответ = await bus.request('ebrb', 'facts.search', { query, limit: 3 }); для каждого элемента ответ.hits —
+  // «[<title>]», с новой строки text; элементы через пустую строку; пусто — «(ничего не найдено)».
+  virtual HashMap<string, Tool> create(string root);
+}

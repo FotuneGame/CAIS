@@ -1,0 +1,22 @@
+import "../../../shared/core/types/roles.types";
+// Запрос MACIE: k — повторов симуляции, b — выборок бутстрэпа, epsilon — порог критического момента,
+// synergy — порог синергии, si — порог эмерджентности, m — число коалиций Шепли
+export virtual class MacieInputDto : IDto {
+  // от 1 до 10080
+  int? minutes;
+  // от 1 до 100
+  int? k;
+  // от 10 до 1000
+  int? b;
+  // от 0
+  double? epsilon;
+  // от 0
+  double? synergy;
+  double? si;
+  int? seed;
+  // от 1 до 10000
+  int? m;
+  bool? shapley;
+  // одно из "concise", "detailed", "full"
+  string? verbosity;
+}

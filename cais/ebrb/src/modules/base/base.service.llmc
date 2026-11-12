@@ -1,0 +1,32 @@
+import "../../config/app.config";
+import "../actions/actions.service";
+import "../attributes/attributes.service";
+import "../rulebase/dto/baseinput.dto";
+import "../rulebase/types/basecount.types";
+import "../rulebase/types/basedata.types";
+import "../rules/rules.service";
+import "../../shared/log/log.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class BaseService : IService {
+  AttributesService attributes;
+  ActionsService actions;
+  RulesService rules;
+  LogService log;
+  AppConfig app;
+  // Сначала await rules.reload(); если правила уже есть — ничего не делать.
+  // Прочитать <app.dataPath>/base.json (нет файла — ничего не делать) и загрузить через load(fromJson(текст)):
+  // успех — log.log(«база загружена из base.json: <число> правил», 'Base');
+  // ошибка — log.error(«base.json не загружен: <сообщение>», стек, 'Base').
+  // вызывается при запуске приложения
+  virtual promise<void> seed();
+  virtual promise<BaseCount> load(BaseInputDto input);
+  BaseData dump() {
+    BaseData data = new BaseData();
+    data.attributes = this.attributes.current();
+    data.actions = this.actions.current();
+    data.rules = this.rules.current();
+    data.hypotheses = this.rules.hypotheses();
+    return data;
+  }
+}

@@ -1,0 +1,12 @@
+import "../../../shared/core/types/base.types";
+// Правило убеждения: antecedents — значения атрибутов, consequent — убеждения гипотез,
+// weight — вес θ, reliability — надёжность ρ, source — 'expert' или 'learned'
+export class RuleData {
+  string id;
+  HashMap<string, double> antecedents;
+  HashMap<string, double> consequent;
+  double weight;
+  double reliability;
+  string source;
+  bool reviewed;
+}

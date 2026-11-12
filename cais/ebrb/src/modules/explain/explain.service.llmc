@@ -1,0 +1,17 @@
+import "../inference/types/trace.types";
+import "../../shared/injection/injection.service";
+import "../../shared/llm/llm.service";
+import "../../shared/prompts/prompts.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class ExplainService : IService {
+  LlmService llm;
+  PromptsService prompts;
+  InjectionService injection;
+  // ответ = await llm.chat([{ role: 'system', content: prompts.text('explain') },
+  // { role: 'user', content: injection.asData(toJson(trace)) }]); вернуть ответ.explanation, если это строка.
+  // Иначе и при любой ошибке — шаблон: «Действие <action>: гипотеза <hypothesis> с β = <belief[hypothesis] или 0>,
+  // незнание βΘ = <ignorance>, конфликт C = <conflict>; правила: <id (ω = activation) через запятую или 'нет'>.»,
+  // числа с двумя знаками после запятой.
+  virtual promise<string> explain(Trace trace);
+}

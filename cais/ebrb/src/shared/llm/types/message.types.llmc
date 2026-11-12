@@ -1,0 +1,4 @@
+export class Message {
+  string role;
+  string content;
+}

@@ -199,12 +199,12 @@ sudo cp volumes/proxy/tls/ca.crt /usr/local/share/ca-certificates/platform.crt &
   метка `app.kubernetes.io/instance`, иначе `app.kubernetes.io/name`, иначе
   `app`, иначе `shared`). В `app-<env>` есть Secret `postgresql-credentials`,
   `redis-credentials`, `clickhouse-credentials` баз окружения. Шаблон бэкенда с
-  настроенными подключениями и CI/CD — [example/node](example/node/README.md),
-  пример агента — [example/agent](example/agent/README.md).
+  настроенными подключениями и CI/CD — [example/node](example/node/README.md).
 - Мультиагентная система CAIS (агенты, MCP, EBRB с фактами, trace, обучение GGUF-моделей) —
-  [cais/README.md](cais/README.md): каждая папка — отдельный проект GitLab
-  `main/cais-*`, развёртывание в Argo CD — `cais/deploy.sh` (без флагов — все
-  окружения, иначе `--dev`, `--stage`, `--prod`). Агенты подключаются к
+  [cais/README.md](cais/README.md): проекты написаны на языке LLMC и переводятся в TypeScript
+  компилятором [compiler](compiler/README.md); каждая папка — отдельный проект GitLab `main/cais-*`,
+  компиляция и развёртывание в Argo CD — `./cais.sh` (без флагов — все окружения, иначе `--dev`,
+  `--stage`, `--prod`). Агенты подключаются к
   веб-интерфейсу llama.cpp через MCP `https://platform.local/<env>/mcp`
   (Settings → MCP servers); вход для mcp — через Keycloak (oauth2-proxy), токен вручную не нужен.
 - Память: на core работают GitLab, мониторинг и сервисы трёх окружений — 20 ГБ

@@ -1,0 +1,9 @@
+import "./base.types";
+export class BusRequest {
+  string id;
+  string replyTo;
+  string action;
+  long deadline;
+  string? token;
+  Any body;
+}

@@ -1,0 +1,11 @@
+import "./activated.types";
+import "../../../shared/core/types/base.types";
+
+export class Trace {
+  string? action;
+  string? hypothesis;
+  HashMap<string, double> belief;
+  double ignorance;
+  double conflict;
+  Activated[] rules;
+}

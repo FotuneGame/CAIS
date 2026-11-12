@@ -1,0 +1,13 @@
+import "../../shared/log/log.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class LogInterceptor : IInterceptor {
+  LogService log;
+  // Запросы, адрес которых начинается с /health или /metrics, не журналировать.
+  // После ответа: log.log(«<метод> <адрес>», 'HTTP', { durationMs }).
+  // При ошибке: log.warn(«<метод> <адрес>: <сообщение ошибки>», 'HTTP', { durationMs }) и пробросить ошибку дальше.
+  // context — ExecutionContext: ExecutionContext из @nestjs/common: context.switchToHttp().getRequest() и getResponse(), getHandler(), getClass()
+  // next — CallHandler: CallHandler из @nestjs/common: next.handle() возвращает Observable из rxjs
+  virtual Any intercept(Any context, Any next);
+}

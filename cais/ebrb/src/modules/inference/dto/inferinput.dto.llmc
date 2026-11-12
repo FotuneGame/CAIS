@@ -1,0 +1,12 @@
+import "./thresholdsinput.dto";
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+
+export virtual class InferInputDto : IDto {
+  // длина от 0 до 8000
+  string? input;
+  Dict? attributes;
+  // длина от 0 до 100
+  string? action;
+  ThresholdsInputDto? thresholds;
+}

@@ -1,0 +1,9 @@
+import "../shared/core/types/roles.types";
+export virtual class EbrbConfig : IConfig {
+  // окружение CONFIDENCE_THRESHOLD, по умолчанию 0.65
+  const double confidence;
+  // окружение IGNORANCE_THRESHOLD, по умолчанию 0.3
+  const double ignorance;
+  // окружение CONFLICT_THRESHOLD, по умолчанию 0.3
+  const double conflict;
+}

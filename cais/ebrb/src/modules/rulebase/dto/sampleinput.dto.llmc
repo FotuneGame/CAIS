@@ -1,0 +1,7 @@
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+export virtual class SampleInputDto : IDto {
+  HashMap<string, double> attributes;
+  // длина от 1 до 200
+  string label;
+}

@@ -1,0 +1,6 @@
+import "../../../shared/core/types/roles.types";
+export virtual class RunStatusDto : IDto {
+  // uuid
+  string id;
+  string? owner;
+}

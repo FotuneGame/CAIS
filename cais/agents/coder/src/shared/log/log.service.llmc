@@ -1,0 +1,20 @@
+import "../../config/app.config";
+import "../../config/log.config";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// Журнал сервиса.
+// Уровень — config.level; в каждой записи поле service = app.name.
+// Консоль: JSON, а при app.dev — цветная строка «время [контекст или App] уровень: сообщение».
+// Если config.path не пуст — ещё файлы <config.path>/<app.name>-%DATE%.log по дням
+// с maxSize = config.maxSize и maxFiles = config.maxDays.
+// журнал приложения: implements LoggerService
+// зависимость journal: Journal — winston.Logger: import * as winston from 'winston'
+export virtual class LogService : IService {
+  AppConfig app;
+  LogConfig config;
+  virtual void log(Any message, string? context = null, Dict? data = null);
+  virtual void warn(Any message, string? context = null, Dict? data = null);
+  virtual void error(Any message, string? trace = null, string? context = null, Dict? data = null);
+  virtual void debug(Any message, string? context = null, Dict? data = null);
+}

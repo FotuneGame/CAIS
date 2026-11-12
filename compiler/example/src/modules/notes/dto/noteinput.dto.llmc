@@ -1,0 +1,9 @@
+import "../types/color.types.llmc";
+import "../../../shared/roles.types.llmc";
+
+export class NoteInputDto : IDto {
+  // длина от 1 до 200
+  string title;
+  string text = "";
+  Color? color;
+}

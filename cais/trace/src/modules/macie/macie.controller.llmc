@@ -1,0 +1,13 @@
+import "./dto/macieinput.dto";
+import "./macie.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь macie
+export virtual class MacieController : IController {
+  MacieService macie;
+  // Параметры из тела, недостающие — по умолчанию: k 10, b 200, epsilon 0.5, synergy 0.1, si 0.1, seed 42,
+  // shapley true, m null, verbosity 'detailed'; вернуть macie.analyze(параметры)
+  // POST без пути
+  virtual promise<Dict> analyze(MacieInputDto body);
+}

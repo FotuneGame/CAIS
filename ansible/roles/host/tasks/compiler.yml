@@ -1,0 +1,44 @@
+---
+- name: Компиляторы C++ для сборки llmc (g++ и MinGW)
+  become: true
+  ansible.builtin.apt:
+    name: "{{ host_compiler_packages }}"
+    update_cache: true
+    cache_valid_time: 3600
+    lock_timeout: 600
+
+- name: Каталог Node.js
+  become: true
+  ansible.builtin.file:
+    path: "{{ host_node_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Загрузка Node.js
+  become: true
+  ansible.builtin.get_url:
+    url: "https://nodejs.org/dist/v{{ host_node_version }}/{{ host_node_archive }}.tar.gz"
+    checksum: "sha256:https://nodejs.org/dist/v{{ host_node_version }}/SHASUMS256.txt"
+    dest: "{{ host_node_dir }}.archive"
+    mode: "0644"
+  register: host_node_download
+  until: host_node_download is succeeded
+  retries: 5
+  delay: 10
+
+- name: Распаковка Node.js
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ host_node_dir }}.archive"
+    dest: "{{ host_node_dir }}"
+    remote_src: true
+    creates: "{{ host_node_dir }}/{{ host_node_archive }}/bin/node"
+
+- name: Ссылки node, npm и npx в /usr/local/bin
+  become: true
+  ansible.builtin.file:
+    src: "{{ host_node_dir }}/{{ host_node_archive }}/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+    force: true
+  loop: [node, npm, npx]

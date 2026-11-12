@@ -1,0 +1,19 @@
+import "../inference/inference.functions";
+import "../inference/types/match.types";
+import "../inference/types/value.types";
+import "../rulebase/types/attributedata.types";
+import "../rulebase/types/ruledata.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class SimilarityService : IService {
+  // Распределение значения по референтным точкам h: массив нулей длины h; value ≤ h[0] — α[0] = 1;
+  // value ≥ последней точки — α[последний] = 1; иначе найти j, где h[j] ≤ value ≤ h[j+1]:
+  // α[j] = (h[j+1] − value) / (h[j+1] − h[j]), α[j+1] = 1 − α[j]
+  virtual double[] distribution(double value, double[] referential);
+  // Для каждого атрибута из rule.antecedents, который есть во входе: referential — из attributes[имя], иначе [0, 1].
+  // S = similarity(distribution(значение входа, referential), distribution(значение правила, referential));
+  // similarity[имя] = уверенность входа · S.
+  // completeness = сумма уверенностей найденных атрибутов / число атрибутов правила (0, если их нет).
+  virtual Match match(RuleData rule, HashMap<string, Value> input, HashMap<string, AttributeData> attributes);
+}

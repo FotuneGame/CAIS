@@ -1,0 +1,12 @@
+import "../../config/mcp.config";
+import "../audit/audit.module";
+import "../check/tools.service";
+import "../docs/tools.service";
+import "./mcp.controller";
+import "./mcp.service";
+import "../oauth/oauth.controller";
+import "../task/tools.service";
+import "../../shared/core/types/roles.types";
+
+// imports — AuditModule; controllers — OauthController, McpController; providers — McpConfig, TaskToolsService, DocsToolsService, CheckToolsService, McpService
+export virtual class McpModule : IModule {}

@@ -1,0 +1,13 @@
+{
+  "about": "Запуск команд операционной системы",
+  "language": "typescript",
+  "mentions": [
+    "процесс",
+    "команд"
+  ],
+  "packages": {},
+  "rules": [
+    "launch — launch(программа, аргументы, параметры) — запустить процесс и читать его вывод по мере появления: события data у stdout и stderr, error и close(код) у процесса → spawn(программа, аргументы, { cwd, env }) из node:child_process",
+    "execute — execute(программа, аргументы, параметры) — выполнить команду и вернуть { stdout, stderr }; ошибка содержит code, stdout, stderr → promisify(execFile) из node:util и node:child_process; параметры: cwd, timeout, maxBuffer"
+  ]
+}

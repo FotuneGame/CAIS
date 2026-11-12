@@ -1,0 +1,143 @@
+{
+  "name": "LLMC",
+  "scopeName": "source.llmc",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#imports"
+    },
+    {
+      "include": "#declarations"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#calls"
+    },
+    {
+      "include": "#operators"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.llmc",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.llmc",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.llmc",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.llmc",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.llmc",
+          "match": "'([^'\\\\]|\\\\.)'"
+        }
+      ]
+    },
+    "imports": {
+      "match": "\\b(import)\\s+(?=\")",
+      "captures": {
+        "1": {
+          "name": "keyword.control.import.llmc"
+        }
+      }
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "\\b(class|enum|interface)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.llmc"
+            },
+            "2": {
+              "name": "entity.name.type.llmc"
+            }
+          }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.llmc",
+          "match": "\\b(break|case|continue|default|do|else|for|if|return|switch|while|throw|try|catch|finally|import|export)\\b"
+        },
+        {
+          "name": "storage.modifier.llmc",
+          "match": "\\b(const|static|public|private|protected|virtual|override|async|typedef)\\b"
+        },
+        {
+          "name": "storage.type.llmc",
+          "match": "\\b(char|double|float|int|long|short|signed|unsigned|void|bool|string|date|promise|class|enum|interface)\\b"
+        },
+        {
+          "name": "constant.language.llmc",
+          "match": "\\b(null|true|false)\\b"
+        },
+        {
+          "name": "variable.language.llmc",
+          "match": "\\b(this|base)\\b"
+        },
+        {
+          "name": "keyword.operator.word.llmc",
+          "match": "\\b(sizeof|as|is|new|delete|await)\\b"
+        },
+        {
+          "name": "entity.name.type.llmc",
+          "match": "\\b[A-Z][A-Za-z0-9]*[a-z][A-Za-z0-9]*\\b"
+        },
+        {
+          "name": "constant.other.llmc",
+          "match": "\\b[A-Z][A-Z0-9_]+\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.llmc",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        },
+        {
+          "name": "constant.numeric.float.llmc",
+          "match": "\\b[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?[fF]?\\b"
+        }
+      ]
+    },
+    "calls": {
+      "name": "entity.name.function.llmc",
+      "match": "\\b[a-z_][A-Za-z0-9_]*(?=\\s*\\()"
+    },
+    "operators": {
+      "name": "keyword.operator.llmc",
+      "match": "\\+\\+|--|<<=|>>=|<<|>>|<=|>=|==|!=|&&|\\|\\||[-+*/%&|^]=|[-+*/%&|^~!<>=?:]"
+    }
+  }
+}

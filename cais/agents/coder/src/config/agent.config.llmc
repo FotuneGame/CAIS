@@ -1,0 +1,7 @@
+import "../shared/core/types/roles.types";
+export virtual class AgentConfig : IConfig {
+  // окружение MAX_STEPS, по умолчанию 12
+  const int maxSteps;
+  // окружение MAX_ATTEMPTS, по умолчанию 2
+  const int maxAttempts;
+}

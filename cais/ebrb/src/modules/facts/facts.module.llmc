@@ -1,0 +1,10 @@
+import "../../config/elastic.config";
+import "../chunk/chunk.service";
+import "../elastic/elastic.service";
+import "./facts.controller";
+import "./facts.service";
+import "../store/store.service";
+import "../../shared/core/types/roles.types";
+
+// controllers — FactsController; providers — ElasticConfig, ElasticService, StoreService, ChunkService, FactsService; exports — ElasticService, FactsService
+export virtual class FactsModule : IModule {}

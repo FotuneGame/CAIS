@@ -1,0 +1,27 @@
+import "../agent/types/action.types";
+import "../agent/types/goal.types";
+import "../goals/goals.service";
+import "../sandbox/types/tool.types";
+import "../../shared/core/core.functions";
+import "../../shared/injection/injection.service";
+import "../../shared/llm/llm.service";
+import "../../shared/llm/types/message.types";
+import "../../shared/prompts/prompts.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class PlannerService : IService {
+  LlmService llm;
+  PromptsService prompts;
+  GoalsService goals;
+  InjectionService injection;
+  // Список инструментов: строки «- <имя>(<args через ', '>): <description>».
+  // Вернуть два сообщения: system — prompts.text('plan', { tools: список });
+  // user — goals.describe(goal), а если memories не пуст — ещё пустая строка, «Опыт прошлых задач:»
+  // и с новой строки injection.asData(memories по одному в строке).
+  virtual Message[] start(Goal goal, string[] memories, HashMap<string, Tool> tools);
+  virtual promise<Action> next(Message[] messages);
+  // Добавить в messages { role: 'user', content: «Результат:» и с новой строки injection.asData(output) }
+  virtual void observe(Message[] messages, string output);
+  virtual void notice(Message[] messages, string name, HashMap<string, Any> vars);
+}

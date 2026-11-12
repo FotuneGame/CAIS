@@ -1,0 +1,22 @@
+import "../../config/kafka.config";
+import "../../config/trace.config";
+import "../events/events.service";
+import "../../shared/kafka/kafka.service";
+import "../../shared/log/log.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class ConsumerService : IService {
+  KafkaService kafka;
+  KafkaConfig kafkaConfig;
+  EventsService events;
+  TraceConfig config;
+  LogService log;
+  // Если kafka.enabled() — подписаться на тему kafkaConfig.topic группой config.group: каждое сообщение разобрать
+  // как JSON, привести events.normalize и записать events.add; неверные сообщения пропускать.
+  // Успех — log.log(«читает группу <group>», 'Consumer'); ошибка —
+  // log.warn(«<сообщение>, повтор через 10 с», 'Consumer') и повтор через 10 секунд.
+  // вызывается при запуске приложения
+  virtual void listen();
+  // вызывается при остановке приложения
+  virtual void close();
+}

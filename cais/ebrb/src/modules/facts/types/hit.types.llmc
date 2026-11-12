@@ -1,0 +1,8 @@
+export class Hit {
+  string id;
+  string title;
+  string text;
+  bool injection;
+  bool reviewed;
+  double score;
+}

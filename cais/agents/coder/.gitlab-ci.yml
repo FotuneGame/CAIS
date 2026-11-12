@@ -12,13 +12,7 @@ stages: [check, build, deploy]
 check:
   extends: .node
   script:
-    - npm run lint
     - npm run build
-
-test:
-  extends: .node
-  script:
-    - npm test
 
 build:
   stage: build

@@ -1,0 +1,11 @@
+import "../shared/core/types/roles.types";
+export virtual class LogConfig : IConfig {
+  // окружение LOG_LEVEL, по умолчанию "info"
+  const string level;
+  // окружение LOG_PATH, по умолчанию ""
+  const string path;
+  // окружение LOG_MAX_SIZE, по умолчанию "5m"
+  const string maxSize;
+  // окружение LOG_MAX_DAYS, по умолчанию "14d"
+  const string maxDays;
+}

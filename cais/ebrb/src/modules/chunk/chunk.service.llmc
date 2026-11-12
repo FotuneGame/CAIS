@@ -1,0 +1,9 @@
+import "../facts/constants/facts.constants";
+import "../../shared/core/types/roles.types";
+
+export virtual class ChunkService : IService {
+  // Делить текст на абзацы по пустой строке и собирать части: если текущая часть не пуста и вместе с абзацем
+  // длиннее CHUNK_SIZE — закончить часть; абзацы в части разделены пустой строкой;
+  // части обрезать по краям, пустые не возвращать
+  virtual string[] split(string text);
+}

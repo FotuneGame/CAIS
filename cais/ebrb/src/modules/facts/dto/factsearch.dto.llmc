@@ -1,0 +1,8 @@
+import "../../../shared/core/types/roles.types";
+export virtual class FactSearchDto : IDto {
+  // длина от 1 до 500
+  string query;
+  // от 1 до 20
+  int? limit;
+  bool? reviewedOnly;
+}

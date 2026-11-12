@@ -1,0 +1,7 @@
+export class Fact {
+  string id;
+  string title;
+  string text;
+  bool injection;
+  bool reviewed;
+}

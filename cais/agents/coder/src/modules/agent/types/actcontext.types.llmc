@@ -1,0 +1,12 @@
+import "./step.types";
+import "../../sandbox/types/tool.types";
+import "../../../shared/llm/types/message.types";
+import "../../../shared/core/types/base.types";
+
+export class ActContext {
+  string run;
+  string root;
+  HashMap<string, Tool> tools;
+  Message[] messages;
+  Step[] steps;
+}

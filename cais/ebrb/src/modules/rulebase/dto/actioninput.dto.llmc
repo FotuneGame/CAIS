@@ -1,0 +1,8 @@
+import "../../../shared/core/types/roles.types";
+export virtual class ActionInputDto : IDto {
+  // шаблон ^[\\w.:-]{1,100}$
+  string name;
+  // длина от 1 до 500
+  string description;
+  bool safe = true;
+}

@@ -1,0 +1,6 @@
+export class Method {
+  string name;
+  double theta;
+  double wcss;
+  double delta;
+}

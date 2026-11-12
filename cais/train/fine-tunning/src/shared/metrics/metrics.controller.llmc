@@ -1,0 +1,6 @@
+import "../core/types/roles.types";
+// Путь metrics; открыт; скрыт из документации
+export virtual class MetricsController : IController {
+  // GET без пути; заголовок Content-Type: METRICS_TYPE
+  virtual promise<string> metrics();
+}

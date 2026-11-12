@@ -1,0 +1,11 @@
+import "../shared/core/types/roles.types";
+export virtual class LlamaConfig : IConfig {
+  // окружение LLAMA_BIN_DIR, по умолчанию "/app"
+  const string binDir;
+  // окружение LLAMA_FINETUNE_ARGS, по умолчанию "-m {model} -f {data} -o {output} -c {context} -b {batch} -ub {batch} -epochs {epochs} -lr {lr} -ngl {gpuLayers} -t {threads}"
+  const string finetuneArgs;
+  // окружение LLAMA_GPU_LAYERS, по умолчанию "0"
+  const string gpuLayers;
+  // окружение LLAMA_THREADS, по умолчанию "2"
+  const string threads;
+}

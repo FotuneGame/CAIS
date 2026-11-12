@@ -31,8 +31,7 @@
 
 ## Команды
 
-- Для запуска с документацией на http://localhost:3000/docs: `AUTH_DISABLED=true npm start`
-- Для тестов и проверки кода: `npm test`, `npm run lint`
+- Для компиляции и запуска: [cais/README.md](../../README.md#команды)
 - Для проброса из кластера: `kubectl port-forward -n app-dev svc/coder 3001:80`
 - Для задачи: `curl -s localhost:3001/runs -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"task":"Напиши fizzbuzz и тест","wait":50}'`
 

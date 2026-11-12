@@ -1,0 +1,15 @@
+import "../../config/llm.config";
+import "./types/message.types";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+export virtual class LlmService : IService {
+  LlmConfig config;
+  // POST <config.url>/v1/chat/completions с телом JSON
+  // { messages, temperature: 0.2, max_tokens: config.maxTokens, response_format: { type: 'json_object' } },
+  // предел времени — config.timeoutMs.
+  // Ошибки: превышение времени (error.name === 'TimeoutError') — «LLM не ответила за <секунд> с»;
+  // сеть — «LLM недоступна: <сообщение>»; статус не ok — «LLM <статус>: <текст ответа>».
+  // Из choices[0].message.content взять текст от первой { до последней } и вернуть разобранный JSON.
+  virtual promise<Dict> chat(Message[] messages);
+}

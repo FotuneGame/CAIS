@@ -1,0 +1,8 @@
+export class GgufOptions {
+  int context;
+  int batch;
+  int epochs;
+  double lr;
+  string? quantize;
+  bool evaluate;
+}

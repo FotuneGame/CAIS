@@ -1,0 +1,22 @@
+import "../gguf/gguf.service";
+import "../models/models.service";
+import "../storage/storage.service";
+import "./constants/train.constants";
+import "./dto/jobstart.dto";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class TrainService : IService {
+  GgufService gguf;
+  ModelsService models;
+  StorageService storage;
+  // baseModel равно model — ошибка BadRequest «model должна отличаться от baseModel».
+  // data = storage.inside(storage.datasetDir(), dataset); проверить storage.inside(storage.modelsDir(), «<model>.gguf»).
+  // Файл базы: file модели реестра models.find(baseModel), иначе storage.inside(storage.modelsDir(), baseModel с расширением
+  // .gguf); файла нет — ошибка BadRequest «нет базовой модели <baseModel>».
+  // Параметры: по умолчанию context TRAIN_CONTEXT, batch 512, epochs TRAIN_EPOCHS, lr 1e-5, quantize 'Q4_K_M',
+  // evaluate true; поверх — заданные в body.options; quantize 'none' — null.
+  // Вернуть { request: { owner, trainer: 'gguf', baseModel, dataset, model },
+  // work: (log) => gguf.train({ baseModel: файл базы, dataset: data, output: model, mode: TRAIN_MODE, options }, log) }.
+  virtual promise<Dict> prepare(JobStartDto body, string owner);
+}

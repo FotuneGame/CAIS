@@ -1,0 +1,9 @@
+import "./synergy.types";
+
+export class Collective {
+  double si;
+  double cs;
+  double ii;
+  Synergy[] interactions;
+  Synergy[] synergy;
+}

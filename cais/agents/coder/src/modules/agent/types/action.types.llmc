@@ -1,0 +1,7 @@
+import "../../../shared/core/types/base.types";
+export class Action {
+  string? thought;
+  string? tool;
+  HashMap<string, string>? args;
+  string? answer;
+}

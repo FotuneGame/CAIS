@@ -1,0 +1,7 @@
+import "../../../shared/core/types/base.types";
+export class Step {
+  string tool;
+  Any args;
+  string decision;
+  string output;
+}

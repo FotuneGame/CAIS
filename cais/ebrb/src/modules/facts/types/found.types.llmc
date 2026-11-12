@@ -1,0 +1,5 @@
+import "./hit.types";
+
+export class Found {
+  Hit[] hits;
+}

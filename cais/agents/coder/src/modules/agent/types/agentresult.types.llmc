@@ -1,0 +1,11 @@
+import "./goal.types";
+import "./step.types";
+
+export class AgentResult {
+  Goal goal;
+  string? answer;
+  bool passed;
+  string review;
+  Step[] steps;
+  string sandbox;
+}

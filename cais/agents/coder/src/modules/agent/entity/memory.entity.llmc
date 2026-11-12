@@ -1,0 +1,10 @@
+import "../../../shared/core/types/roles.types";
+// Таблица coder_memories
+export virtual class MemoryEntity : IDBEntity {
+  // ключ
+  int id;
+  string kind;
+  string text;
+  // создано
+  date createdAt;
+}

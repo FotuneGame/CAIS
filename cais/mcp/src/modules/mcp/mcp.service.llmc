@@ -1,0 +1,27 @@
+import "../audit/audit.service";
+import "../check/tools.service";
+import "../docs/tools.service";
+import "../task/tools.service";
+import "../../shared/core/core.functions";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class McpService : IService {
+  AuditService audit;
+  KafkaService kafka;
+  TaskToolsService tasks;
+  DocsToolsService docs;
+  CheckToolsService checks;
+  // Создать McpServer { name: 'cais', version: '1.0.0' } и зарегистрировать инструменты групп tasks, docs, checks:
+  // group.register(server, guard, user).
+  // guard(имя, обработчик) возвращает функцию от аргументов инструмента:
+  // вход для журнала — аргументы, а если это объект с полем signal (инструмент без аргументов) — {};
+  // await audit.record(user, имя, вход, 'start'); выполнить обработчик;
+  // успех — outcome 'ok', ответ { content: [{ type: 'text', text: JSON с отступом 2 }] };
+  // ошибка — outcome «error: <сообщение>», ответ { isError: true, content: [{ type: 'text', text: сообщение }] };
+  // await audit.record(user, имя, вход, outcome); kafka.publish({ type: 'tool', user, tool: имя, outcome });
+  // вернуть ответ.
+  // create — McpServer: McpServer из @modelcontextprotocol/sdk/server/mcp.js: new McpServer({ name, version })
+  virtual Any create(string user);
+}

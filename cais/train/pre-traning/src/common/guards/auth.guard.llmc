@@ -1,0 +1,18 @@
+import "../../config/app.config";
+import "../../shared/keycloak/keycloak.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// зависимость reflector: Reflector — Reflector из @nestjs/core: reflector.getAllAndOverride('ключ', [context.getHandler(), context.getClass()])
+export virtual class AuthGuard : IGuard {
+  KeycloakService keycloak;
+  AppConfig app;
+  // Если keycloak.disabled() — записать в request.user результат keycloak.localUser() и допустить запрос.
+  // Запрос с метаданными open допускается без токена.
+  // Иначе нужен заголовок Authorization: Bearer <токен>; request.user = await keycloak.verify(токен).
+  // При любой ошибке — заголовок ответа
+  // WWW-Authenticate: Bearer resource_metadata="<app.publicUrl>/.well-known/oauth-protected-resource"
+  // и ошибка Unauthorized «Нужен действующий токен Keycloak».
+  // context — ExecutionContext: ExecutionContext из @nestjs/common: context.switchToHttp().getRequest() и getResponse(), getHandler(), getClass()
+  virtual promise<bool> canActivate(Any context);
+}

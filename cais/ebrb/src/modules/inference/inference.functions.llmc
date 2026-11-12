@@ -1,0 +1,26 @@
+import "./types/thresholds.types";
+
+double root(double value) {
+  double guess = value > 1 ? value : 1.0;
+  for (int i = 0; i < 40; i++) {
+    guess = (guess + value / guess) / 2;
+  }
+  return value <= 0 ? 0.0 : guess;
+}
+
+export double distance(double[] a, double[] b, int i) {
+  return i >= sizeof(a) ? 0.0 : (a[i] - b[i]) * (a[i] - b[i]) + distance(a, b, i + 1);
+}
+
+export double similarity(double[] input, double[] rule) {
+  double value = 1 - root(distance(input, rule, 0) / 2);
+  return value > 0 ? value : 0.0;
+}
+
+export bool approved(double top, double ignorance, double conflict, bool safe, Thresholds t) {
+  return top >= t.confidence && ignorance <= t.ignorance && conflict <= t.conflict && safe;
+}
+
+export bool refine(double ignorance, double conflict, Thresholds t) {
+  return ignorance > t.ignorance || conflict > t.conflict;
+}

@@ -1,0 +1,10 @@
+import "../../../shared/core/types/roles.types";
+// Таблица ebrb_actions
+export virtual class ActionEntity : IDBEntity {
+  // идентификатор
+  string name;
+  string description;
+  bool safe = true;
+  // изменено
+  date updatedAt;
+}

@@ -1,0 +1,16 @@
+import "../agent/types/action.types";
+import "../files/files.service";
+import "../sandbox/types/tool.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class OntologyService : IService {
+  FilesService files;
+  // Вернуть названия нарушенных аксиом шага:
+  // «шаг — объект»: action — объект и не null;
+  // «есть либо tool, либо answer»: задано ровно одно из action.tool и action.answer;
+  // «tool есть в реестре»: action.tool не задан или есть среди собственных ключей tools;
+  // «у tool заданы все аргументы»: tool неизвестен или каждый аргумент из tools[tool].args задан в action.args;
+  // «path внутри песочницы»: action.args.path не задан или files.inside(root, path) не бросает ошибку.
+  virtual string[] validate(Action action, HashMap<string, Tool> tools, string root);
+}

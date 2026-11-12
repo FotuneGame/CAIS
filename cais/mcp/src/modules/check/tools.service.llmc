@@ -1,0 +1,17 @@
+import "../audit/audit.service";
+import "../../shared/bus/client.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class CheckToolsService : IService {
+  BusClientService bus;
+  AuditService audit;
+  // action_check — «Оценить действие базой правил EBRB: LLM извлекает атрибуты из описания, ответ — гипотеза
+  // эксперта (например ALLOW, BLOCK) или ESCALATE»; аргумент action — строка 1..4000;
+  // вернуть bus.request('ebrb', 'infer', { input: action }).
+  // group_report — «Отчёт о поведении агентов: свойства группы и аномалии»; аргумент minutes — целое 1..10080,
+  // по умолчанию 60; вернуть bus.request('trace', 'report', аргументы).
+  // audit_check — «Проверить целостность журнала вызовов MCP (цепочка хешей)»; без аргументов; вернуть audit.verify().
+  // server — McpServer: McpServer из @modelcontextprotocol/sdk/server/mcp.js: new McpServer({ name, version })
+  virtual void register(Any server, Handler guard, string owner);
+}

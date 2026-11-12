@@ -1,0 +1,17 @@
+import "../rulebase/dto/attributeinput.dto";
+import "../rulebase/entity/attribute.entity";
+import "../rulebase/types/attributedata.types";
+import "../../shared/core/types/roles.types";
+
+// зависимость attributes: table<AttributeEntity> — Repository<E> из typeorm
+export virtual class AttributesService : IService {
+  AttributeData[] cache = {};
+  AttributeData[] current() { return this.cache; }
+  // вызывается при создании модуля
+  virtual promise<AttributeData[]> reload();
+  // Если у атрибута в отсортированном referential есть повтор — ошибка BadRequest
+  // «<name>: референтные значения повторяются». Сохранить записи и вернуть reload().
+  virtual promise<AttributeData[]> save(AttributeInputDto[] items);
+  // Удалить запись; ничего не удалено — ошибка NotFound «нет атрибута <name>»; вернуть reload()
+  virtual promise<AttributeData[]> remove(string name);
+}

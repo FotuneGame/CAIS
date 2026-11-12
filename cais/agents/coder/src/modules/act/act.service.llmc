@@ -1,0 +1,30 @@
+import "../../config/agent.config";
+import "../agent/types/actcontext.types";
+import "../gate/gate.service";
+import "../ontology/ontology.service";
+import "../planner/planner.service";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class ActService : IService {
+  PlannerService planner;
+  GateService gate;
+  OntologyService ontology;
+  KafkaService kafka;
+  AgentConfig config;
+  // Не больше config.maxSteps шагов; на каждом: action = await planner.next(context.messages).
+  // нарушения = ontology.validate(action, context.tools, context.root); если есть —
+  // kafka.publish({ type: 'violation', run: context.run, violations }),
+  // planner.notice(messages, 'rules', { violations: нарушения через '; ' }) и следующий шаг.
+  // Если action.answer задан — вернуть String(action.answer).
+  // Повтор: ключ шага toJson([tool, args]); третий подряд одинаковый ключ не выполнять —
+  // kafka.publish({ type: 'violation', run, violations: ['повтор действия'] }),
+  // planner.notice(messages, 'repeat', { count: число повторов минус 1 }) и следующий шаг.
+  // Исполнение: вердикт = await gate.check(action, инструмент); при decision 'ALLOW'
+  // вывод = await инструмент.run(action.args или {}), ошибка — «ошибка: <сообщение>»;
+  // иначе вывод «действие не допущено (<decision>): <reason или 'правила EBRB'>».
+  // Добавить в context.steps { tool, args, decision, output };
+  // kafka.publish({ type: 'step', run, tool, decision, durationMs }); planner.observe(messages, вывод).
+  // Шаги кончились — вернуть null.
+  virtual promise<string?> act(ActContext context);
+}

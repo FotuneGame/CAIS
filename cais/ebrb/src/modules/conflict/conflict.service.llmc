@@ -1,0 +1,8 @@
+import "../rulebase/types/ruledata.types";
+import "../../shared/core/types/roles.types";
+
+export virtual class ConflictService : IService {
+  // C = Σ ωₖωₗ(1 − cos(βₖ, βₗ)) / Σ ωₖωₗ по парам правил k < l с ненулевым произведением весов; нет таких пар — 0.
+  // cos — косинус векторов убеждений consequent по списку гипотез (нет гипотезы — 0); нулевая норма — 0.
+  virtual double measure(RuleData[] rules, double[] weights, string[] hypotheses);
+}

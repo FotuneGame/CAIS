@@ -1,0 +1,5 @@
+import "../shared/core/types/roles.types";
+export virtual class SandboxConfig : IConfig {
+  // окружение COMMAND_TIMEOUT_MS, по умолчанию 60000
+  const int commandTimeoutMs;
+}

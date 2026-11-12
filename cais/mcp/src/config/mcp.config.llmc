@@ -1,0 +1,5 @@
+import "../shared/core/types/roles.types";
+export virtual class McpConfig : IConfig {
+  // окружение AGENTS, список через запятую, по умолчанию "coder"
+  const string[] agents;
+}

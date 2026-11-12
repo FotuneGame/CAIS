@@ -1,0 +1,8 @@
+import "../../../shared/core/types/roles.types";
+export virtual class RunStartDto : IDto {
+  // длина от 1 до 4000
+  string task;
+  string? owner;
+  // от 0 до 300
+  int? wait;
+}

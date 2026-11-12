@@ -1,0 +1,6 @@
+import "../../../shared/core/types/base.types";
+export class Trained {
+  string file;
+  string? quantized;
+  HashMap<string, double> metrics;
+}

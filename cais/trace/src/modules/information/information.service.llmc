@@ -1,0 +1,13 @@
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+export virtual class InformationService : IService {
+  virtual Any counts(string[] values);
+  virtual double entropy(string[] values);
+  virtual double mutual(string[] xs, string[] ys);
+  virtual double conditional(string[] xs, string[] ys, string[] zs);
+  // G-тест зависимости: df = (число значений X − 1)·(число значений Y − 1); если df ≤ 0 или наблюдений меньше 3 — false.
+  // G = 2·n·I(X; Y); критическое значение χ² при α = 0.05 по Уилсону — Хилферти:
+  // df·(1 − 2/(9·df) + 1.645·√(2/(9·df)))³; вернуть G > критического.
+  virtual bool dependent(string[] xs, string[] ys);
+  virtual double correlation(double[] a, double[] b);
+}

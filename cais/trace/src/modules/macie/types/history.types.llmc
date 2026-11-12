@@ -1,0 +1,6 @@
+import "./step.types";
+
+export class History {
+  string[] agents;
+  Step[] steps;
+}

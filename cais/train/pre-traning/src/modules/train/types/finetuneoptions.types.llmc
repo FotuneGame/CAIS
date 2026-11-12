@@ -1,0 +1,9 @@
+export class FinetuneOptions {
+  string model;
+  string data;
+  string output;
+  int context;
+  int batch;
+  int epochs;
+  double lr;
+}

@@ -1,0 +1,15 @@
+import "../inference/types/validated.types";
+import "../rulebase/types/attributedata.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ValidationService : IService {
+  // raw — словарь имя → { value, confidence }. Для каждого атрибута схемы: значения нет (undefined или null) —
+  // проблема «<name>: нет значения», только если атрибут required.
+  // value = number(value), confidence = 1, если не задана, иначе number(confidence);
+  // диапазон — от первого до последнего referential.
+  // Проблемы: «<name>: значение не число»; «<name>: <value> вне диапазона <min>..<max>»;
+  // «<name>: уверенность вне 0..1»; без проблем — extracted[name] = { value, confidence }.
+  // Каждый ключ raw, которого нет в схеме, — проблема «<name>: нет в схеме атрибутов».
+  virtual Validated validate(Dict raw, AttributeData[] attributes);
+}

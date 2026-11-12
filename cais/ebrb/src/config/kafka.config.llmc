@@ -1,0 +1,9 @@
+import "../shared/core/types/roles.types";
+export virtual class KafkaConfig : IConfig {
+  // окружение KAFKA_BROKERS, список через запятую, по умолчанию ""
+  const string[] brokers;
+  // окружение KAFKA_TOPIC, по умолчанию "cais.events"
+  const string topic;
+  // окружение BUS_TIMEOUT_MS, по умолчанию 180000
+  const int timeoutMs;
+}

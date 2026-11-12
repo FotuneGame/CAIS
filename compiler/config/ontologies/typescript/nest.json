@@ -1,0 +1,85 @@
+{
+  "about": "NestJS: внедрение зависимостей, модули приложения и запросы HTTP",
+  "language": "typescript",
+  "mentions": [
+    "nest",
+    "http",
+    "запрос",
+    "сервис",
+    "контроллер",
+    "модул",
+    "настройк"
+  ],
+  "packages": {
+    "@nestjs/common": {
+      "version": "^12.2.0",
+      "url": "https://registry.npmjs.org/@nestjs/common",
+      "about": "NestJS: внедрение зависимостей, модули приложения и запросы HTTP",
+      "requires": [
+        "@nestjs/core",
+        "reflect-metadata",
+        "rxjs"
+      ]
+    },
+    "@nestjs/core": {
+      "version": "^12.2.0",
+      "url": "https://registry.npmjs.org/@nestjs/core",
+      "about": "NestJS: внедрение зависимостей, модули приложения и запросы HTTP",
+      "requires": [
+        "@nestjs/common",
+        "@nestjs/platform-express",
+        "reflect-metadata",
+        "rxjs"
+      ]
+    },
+    "@nestjs/platform-express": {
+      "version": "^12.2.0",
+      "url": "https://registry.npmjs.org/@nestjs/platform-express",
+      "about": "HTTP-сервер NestJS; сам не импортируется"
+    },
+    "express": {
+      "version": "^5.1.0",
+      "url": "https://registry.npmjs.org/express",
+      "about": "только типы Request и Response через import type",
+      "requires": [
+        "@types/express"
+      ]
+    },
+    "reflect-metadata": {
+      "version": "^0.2.2",
+      "url": "https://registry.npmjs.org/reflect-metadata",
+      "about": "метаданные декораторов; в точке входа первой строкой: import 'reflect-metadata'"
+    },
+    "rxjs": {
+      "version": "^7.8.2",
+      "url": "https://registry.npmjs.org/rxjs",
+      "about": "NestJS: внедрение зависимостей, модули приложения и запросы HTTP"
+    },
+    "@types/express": {
+      "version": "^5.0.6",
+      "url": "https://registry.npmjs.org/@types/express",
+      "about": "типы express; не импортируется"
+    },
+    "@nestjs/swagger": {
+      "version": "^12.0.3",
+      "url": "https://registry.npmjs.org/@nestjs/swagger",
+      "about": "Документация API Swagger"
+    }
+  },
+  "rules": [
+    "Сервис — сервис: объект создаёт контейнер и передаёт другим классам; поля с типом класса проекта — зависимости: параметры конструктора private readonly; комментарий «зависимость имя: тип» над классом — ещё один параметр конструктора → @Injectable() из @nestjs/common; метод с комментарием «вызывается при создании модуля» вызывается из onModuleInit() (implements OnModuleInit), «при запуске приложения» — из onApplicationBootstrap(), «при остановке приложения» — из onModuleDestroy()",
+    "Настройки сервиса — настройки сервиса: объект создаёт контейнер; значение поля — по комментарию «окружение ИМЯ, по умолчанию значение»: строка — process.env.ИМЯ || значение, целое — parseInt(..., 10), вещественное — parseFloat, логическое — (process.env.ИМЯ ?? String(значение)) === 'true', «список через запятую» — split(',') с trim и без пустых → @Injectable() из @nestjs/common, export class с public readonly полями",
+    "Модуль приложения — модуль приложения; состав — в комментарии: imports, controllers, providers, exports → @Module({ imports: [...], controllers: [...], providers: [...], exports: [...] }) из @nestjs/common; класс Guard в providers — { provide: APP_GUARD, useClass: Класс }, класс Interceptor — { provide: APP_INTERCEPTOR, useClass: Класс } из @nestjs/core; «глобальный» — @Global()",
+    "Контроллер — класс принимает запросы HTTP; поля с типом класса проекта — зависимости: параметры конструктора private readonly → @Controller('путь') из @nestjs/common, @ApiTags('путь') и @ApiBearerAuth() из @nestjs/swagger; путь класса («Путь x» или «Без пути») и запрос каждого метода — в комментарии: «GET путь» — @Get, «POST путь» — @Post и @HttpCode(200), «PUT путь» — @Put, «DELETE путь» — @Delete, «ANY путь» — @All; параметр-структура — @Body(), параметр из пути — @Param('имя'), из строки запроса — @Query('имя'); «открыт» — @SetMetadata('open', true); «действие имя» — @SetMetadata('action', 'имя'); «заголовок имя: значение» — @Header; «скрыт из документации» — @ApiExcludeController() без @ApiTags; «исходный запрос» — @Req() из express, «исходный ответ» — @Res(); «имя — вызывающий» — @Req() { user }, «имя — параметр пути x» — @Param('x'), «имя — параметр строки запроса x» — @Query('x'); «вызывается при создании модуля», «при запуске приложения», «при остановке приложения» — как у Service",
+    "Страж запросов — класс решает, допустить ли запрос: метод canActivate; поля с типом класса проекта — зависимости: параметры конструктора private readonly → @Injectable(), implements CanActivate",
+    "Перехватчик запросов — класс выполняет действие вокруг каждого запроса: метод intercept; поля с типом класса проекта — зависимости: параметры конструктора private readonly → @Injectable(), implements NestInterceptor",
+    "Application — приложение: запуск сервера → INestApplication из @nestjs/common; создаётся await NestFactory.create(КорневойМодуль, { bufferLogs: true }) из @nestjs/core; первой строкой файла import 'reflect-metadata'",
+    "ValidationPipe — проверка входных данных всех запросов → app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true })) из @nestjs/common",
+    "ExecutionContext — сведения о текущем запросе в страже и перехватчике → ExecutionContext из @nestjs/common: context.switchToHttp().getRequest() и getResponse(), getHandler(), getClass()",
+    "CallHandler — продолжение обработки запроса в перехватчике → CallHandler из @nestjs/common: next.handle() возвращает Observable из rxjs; операторы tap, catchError, throwError",
+    "Reflector — чтение метаданных атрибутов Open и Action → Reflector из @nestjs/core: reflector.getAllAndOverride('ключ', [context.getHandler(), context.getClass()])",
+    "Discovery — поиск контроллеров приложения → DiscoveryService из @nestjs/core: getControllers() возвращает обёртки с полем instance; в imports модуля нужен DiscoveryModule",
+    "Ошибки запросов — из @nestjs/common: 400 BadRequestException, 401 UnauthorizedException, 403 ForbiddenException, 404 NotFoundException, 503 ServiceUnavailableException, 405 — new HttpException(сообщение, HttpStatus.METHOD_NOT_ALLOWED).",
+    "Запрос и ответ HTTP — Request и Response из express через import type; поле user запроса добавляет страж."
+  ]
+}

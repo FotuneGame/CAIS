@@ -1,0 +1,25 @@
+import "../notes/constants/notes.constants.llmc";
+import "../notes/dto/noteinput.dto.llmc";
+import "../notes/entity/note.entity.llmc";
+import "../notes/notes.functions.llmc";
+import "../notes/types/summary.types.llmc";
+import "../../shared/roles.types.llmc";
+
+// Работает с таблицей записей NoteEntity
+export class NoteService : IService, ICRUD<NoteEntity, NoteInputDto> {
+  // Сохранить заметку. Если заметок уже LIMIT или больше — ошибка 400 «слишком много заметок».
+  virtual async promise<NoteEntity> add(NoteInputDto input) {}
+  virtual async promise<NoteEntity[]> list() {}
+  async promise<Summary> summary() {
+    NoteEntity[] all = await this.list();
+    int total = 0;
+    for (int i = 0; i < sizeof(all); i++) {
+      // длина текста заметки
+      total += sizeof(all[i].text);
+    }
+    Summary result = new Summary();
+    result.count = sizeof(all);
+    result.average = average(total, sizeof(all));
+    return result;
+  }
+}

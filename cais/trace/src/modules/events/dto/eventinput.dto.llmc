@@ -1,0 +1,13 @@
+import "../../../shared/core/types/roles.types";
+export virtual class EventInputDto : IDto {
+  // длина от 1 до 50
+  string agent;
+  // длина от 1 до 50
+  string type;
+  string? time;
+  string? run;
+  string? tool;
+  string? decision;
+  string? status;
+  double? durationMs;
+}

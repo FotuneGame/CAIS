@@ -1,0 +1,7 @@
+import "./entity/prompt.entity";
+import "./prompts.controller";
+import "./prompts.service";
+import "../core/types/roles.types";
+
+// глобальный; таблицы — PromptEntity; controllers — PromptsController; providers — PromptsService; exports — PromptsService
+export virtual class PromptsModule : IModule {}

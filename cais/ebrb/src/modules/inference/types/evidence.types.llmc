@@ -1,0 +1,6 @@
+import "../../../shared/core/types/base.types";
+export class Evidence {
+  HashMap<string, double> consequent;
+  double weight;
+  double completeness;
+}

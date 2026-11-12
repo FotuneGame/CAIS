@@ -1,0 +1,7 @@
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+export virtual class BootstrapService : IService {
+  // 95% доверительный интервал суммы: b выборок с возвращением того же размера, суммы по возрастанию,
+  // границы — элементы с номерами min(b − 1, floor(0.025·b)) и min(b − 1, floor(0.975·b)); пустой список — [0, 0]
+  virtual double[] interval(double[] values, int b, Handler rng);
+}

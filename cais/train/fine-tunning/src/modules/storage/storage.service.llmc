@@ -1,0 +1,14 @@
+import "../../config/app.config";
+import "../../shared/core/types/roles.types";
+
+export virtual class StorageService : IService {
+  AppConfig app;
+  string datasetDir() { return this.app.dataPath + "/dataset"; }
+  string modelsDir() { return this.app.dataPath + "/models"; }
+  // Полный путь resolvePath(dir, name); если он не начинается с resolvePath(dir) + SEPARATOR —
+  // ошибка BadRequest «путь вне папки: <name>»
+  virtual string inside(string dir, string name);
+  // Создать папку, если её нет; вернуть пути всех её файлов рекурсивно относительно папки с разделителем «/»,
+  // кроме файлов .gitkeep
+  virtual promise<string[]> files(string dir);
+}

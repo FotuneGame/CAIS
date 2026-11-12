@@ -1,0 +1,10 @@
+import "../../config/app.config";
+import "../log/log.service";
+import "./types/base.types";
+
+// Запуск сервиса CAIS из корневого модуля.
+// Создать приложение с bufferLogs: true; журнал — app.useLogger(app.get(LogService)); включить enableShutdownHooks().
+// Настройки — app.get(AppConfig). Включить ValidationPipe для всех запросов.
+// Документация ApiDocs с заголовком settings.name.
+// Слушать порт settings.port и записать log.log(«<name> слушает порт <port>», 'Bootstrap').
+export virtual promise<void> start(Any rootModule);

@@ -1,0 +1,14 @@
+import "../../../shared/core/types/roles.types";
+export virtual class TrainOptionsDto : IDto {
+  // от 64 до 32768
+  int? context;
+  // от 1 до 8192
+  int? batch;
+  // от 1 до 100
+  int? epochs;
+  // от 0 до 1
+  double? lr;
+  bool? evaluate;
+  // одно из "Q4_K_M", "Q5_K_M", "Q6_K", "Q8_0", "none"
+  string? quantize;
+}

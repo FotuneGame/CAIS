@@ -1,0 +1,18 @@
+import "../anomalies/anomalies.service";
+import "../emergence/emergence.service";
+import "../events/events.service";
+import "../events/types/event.types";
+import "../stats/stats.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ReportService : IService {
+  EventsService events;
+  StatsService stats;
+  AnomaliesService anomalies;
+  EmergenceService emergence;
+  virtual promise<Dict> create(string? agent, int? minutes);
+  // { events: число событий, agents: по каждому агенту { events, runs: число разных run, types: число событий по type },
+  // emergence: emergence.measure(events), anomalies: anomalies.find(events) }
+  virtual Dict build(Event[] events);
+}

@@ -1,0 +1,12 @@
+export class MacieOptions {
+  int? minutes;
+  int k;
+  int b;
+  double epsilon;
+  double synergy;
+  double si;
+  int seed;
+  bool shapley;
+  int? m;
+  string verbosity;
+}

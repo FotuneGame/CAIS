@@ -1,0 +1,9 @@
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+export virtual class StatsService : IService {
+  virtual double mean(double[] xs);
+  virtual double std(double[] xs);
+  virtual HashMap<string, Any[]> group(Any[] items, Handler key);
+  virtual HashMap<string, int> countBy(Any[] items, Handler key);
+  virtual double entropy(HashMap<string, int> counts);
+}

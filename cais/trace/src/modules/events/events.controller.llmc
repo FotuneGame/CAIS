@@ -1,0 +1,15 @@
+import "./dto/eventfilter.dto";
+import "./dto/eventinput.dto";
+import "./events.service";
+import "./types/eventlist.types";
+import "./types/stored.types";
+import "../../shared/core/types/roles.types";
+
+// Путь events
+export virtual class EventsController : IController {
+  EventsService events;
+  // POST без пути
+  virtual promise<Stored> add(EventInputDto body);
+  // POST search
+  virtual promise<EventList> search(EventFilterDto body);
+}

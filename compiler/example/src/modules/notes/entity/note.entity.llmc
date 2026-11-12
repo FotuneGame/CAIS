@@ -1,0 +1,13 @@
+import "../types/color.types.llmc";
+import "../../../shared/roles.types.llmc";
+
+// Таблица notes
+export class NoteEntity : IDBEntity {
+  // ключ, значение создаёт база
+  int id;
+  string title;
+  string text;
+  Color? color;
+  // время создания записи
+  date createdAt;
+}

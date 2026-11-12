@@ -1,0 +1,4 @@
+export class Synergy {
+  string[] pair;
+  double sigma;
+}

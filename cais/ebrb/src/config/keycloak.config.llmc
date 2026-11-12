@@ -1,0 +1,15 @@
+import "../shared/core/types/roles.types";
+export virtual class KeycloakConfig : IConfig {
+  // окружение AUTH_DISABLED, по умолчанию false
+  const bool disabled;
+  // окружение KEYCLOAK_ISSUERS, список через запятую, по умолчанию ""
+  const string[] issuers;
+  // окружение KEYCLOAK_JWKS_URL, по умолчанию ""
+  const string jwksUrl;
+  // окружение KEYCLOAK_TOKEN_URL, по умолчанию ""
+  const string tokenUrl;
+  // окружение KEYCLOAK_CLIENT_ID, по умолчанию ""
+  const string clientId;
+  // окружение KEYCLOAK_CLIENT_SECRET, по умолчанию ""
+  const string clientSecret;
+}

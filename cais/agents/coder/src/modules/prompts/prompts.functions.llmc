@@ -1,0 +1,6 @@
+import "./constants/prompts.constants";
+import "../../shared/core/types/base.types";
+
+// Промпты агента по умолчанию: goal — PROMPT_GOAL, plan — PROMPT_PLAN, check — PROMPT_CHECK,
+// retry — PROMPT_RETRY, rules — PROMPT_RULES, repeat — PROMPT_REPEAT
+export virtual HashMap<string, string> defaultPrompts();

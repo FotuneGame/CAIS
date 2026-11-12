@@ -1,0 +1,8 @@
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+export virtual class KmeansService : IService {
+  // Центры — первые min(k, число точек) точек; iterations (по умолчанию 50) шагов: точка — к ближайшему центру,
+  // центр — среднее своих точек (пустой кластер не меняется). Вернуть { assignments, wcss: сумма квадратов
+  // расстояний до своих центров }; нет точек — { assignments: [], wcss: 0 }
+  virtual Dict cluster(double[][] points, int k, int iterations = 50);
+}

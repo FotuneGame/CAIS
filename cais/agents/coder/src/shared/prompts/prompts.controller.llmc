@@ -1,0 +1,13 @@
+import "./dto/promptupdate.dto";
+import "./prompts.service";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// Путь prompts
+export virtual class PromptsController : IController {
+  PromptsService prompts;
+  // GET без пути
+  promise<HashMap<string, string>> list() { return this.prompts.reload(); }
+  // PUT без пути
+  promise<HashMap<string, string>> update(PromptUpdateDto body) { return this.prompts.update(body.name, body.text); }
+}

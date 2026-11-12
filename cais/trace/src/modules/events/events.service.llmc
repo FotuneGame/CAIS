@@ -1,0 +1,27 @@
+import "../../config/trace.config";
+import "../clickhouse/clickhouse.service";
+import "./types/event.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// События в таблице ClickHouse cais_events. Перед первым запросом один раз создать таблицу
+// (при ошибке следующая попытка повторяет создание):
+// CREATE TABLE IF NOT EXISTS cais_events (time DateTime64(3, 'UTC'), agent String, type String, run String,
+// tool String, decision String, status String, durationMs Nullable(Float64)) ENGINE = MergeTree ORDER BY time
+// TTL toDateTime(time) + INTERVAL <config.keepDays> DAY
+export virtual class EventsService : IService {
+  ClickhouseService clickhouse;
+  TraceConfig config;
+  // Событие из произвольного объекта: строковые поля agent, type, time, run, tool, decision, status и число durationMs;
+  // нет agent или type — null; time по умолчанию — текущее время в ISO
+  virtual Event? normalize(Dict value);
+  // Записать события: time в виде «ГГГГ-ММ-ДД чч:мм:сс.мсс» (ISO без T и Z), пустые строки вместо отсутствующих
+  // run, tool, decision, status, durationMs — число или null
+  virtual promise<void> add(Event[] events);
+  // agent по умолчанию '', minutes — 0, limit — 10000. Запрос с параметрами agent, minutes, limit:
+  // SELECT * FROM (SELECT * FROM cais_events WHERE ({agent:String} = '' OR agent = {agent:String})
+  // AND ({minutes:UInt32} = 0 OR time >= now64(3) - toIntervalMinute({minutes:UInt32}))
+  // ORDER BY time DESC LIMIT {limit:UInt32}) ORDER BY time
+  // В ответе time привести к ISO (пробел заменить на T, добавить Z), durationMs null — не задано.
+  virtual promise<Event[]> find(string? agent = null, int? minutes = null, int? limit = null);
+}

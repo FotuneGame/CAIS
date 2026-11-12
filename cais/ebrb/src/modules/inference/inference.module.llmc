@@ -1,0 +1,19 @@
+import "../../config/ebrb.config";
+import "../activation/activation.service";
+import "../conflict/conflict.service";
+import "../evidence/evidence.service";
+import "../explain/explain.service";
+import "../extraction/extraction.service";
+import "../facts/facts.module";
+import "../infer/infer.controller";
+import "../infer/infer.service";
+import "../plan/plan.service";
+import "../policy/policy.service";
+import "../reasoning/reasoning.service";
+import "../rulebase/rulebase.module";
+import "../similarity/similarity.service";
+import "../validation/validation.service";
+import "../../shared/core/types/roles.types";
+
+// imports — RulebaseModule, FactsModule; controllers — InferController; providers — EbrbConfig, SimilarityService, ActivationService, ReasoningService, ConflictService, EvidenceService, ExtractionService, ValidationService, PlanService, PolicyService, ExplainService, InferService
+export virtual class InferenceModule : IModule {}

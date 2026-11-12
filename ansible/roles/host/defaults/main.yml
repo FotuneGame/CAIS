@@ -31,6 +31,13 @@ host_archives:
     binary: terraform
 host_archives_dir: /opt/platform-tools
 
+host_compiler_packages:
+  - g++
+  - mingw-w64
+host_node_version: 24.11.0
+host_node_archive: "node-v{{ host_node_version }}-linux-x64"
+host_node_dir: "{{ host_archives_dir }}/node"
+
 host_encryption_config: "{{ host_repo }}/volumes/minikube/encryption/encryption-config.yaml"
 host_encryption_node_path: "{{ host_tf.encryption_config }}"
 

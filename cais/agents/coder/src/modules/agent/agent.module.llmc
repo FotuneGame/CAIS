@@ -1,0 +1,15 @@
+import "../../config/agent.config";
+import "../act/act.service";
+import "./agent.service";
+import "./entity/memory.entity";
+import "../gate/gate.service";
+import "../goals/goals.service";
+import "../memory/memory.service";
+import "../ontology/ontology.service";
+import "../planner/planner.service";
+import "../reflection/reflection.service";
+import "../sandbox/sandbox.module";
+import "../../shared/core/types/roles.types";
+
+// таблицы — MemoryEntity; imports — SandboxModule; providers — AgentConfig, MemoryService, GoalsService, PlannerService, ReflectionService, GateService, OntologyService, ActService, AgentService; exports — AgentService
+export virtual class AgentModule : IModule {}

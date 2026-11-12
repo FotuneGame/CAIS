@@ -1,0 +1,17 @@
+import "../../config/llama.config";
+import "../dataset/dataset.service";
+import "../gguf/gguf.service";
+import "../jobs/jobs.controller";
+import "../jobs/jobs.service";
+import "../llama/llama.service";
+import "../models/models.controller";
+import "../models/models.service";
+import "../runner/runner.service";
+import "../storage/storage.service";
+import "./entity/job.entity";
+import "./entity/model.entity";
+import "./train.service";
+import "../../shared/core/types/roles.types";
+
+// таблицы — JobEntity, ModelEntity; controllers — JobsController, ModelsController; providers — StorageService, LlamaConfig, LlamaService, DatasetService, GgufService, ModelsService, RunnerService, JobsService, TrainService
+export virtual class TrainModule : IModule {}

@@ -1,0 +1,17 @@
+import "./entity/audit.entity";
+import "./types/auditcheck.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// зависимость audit: table<AuditEntity> — Repository<E> из typeorm
+export virtual class AuditService : IService {
+  virtual string digest(AuditEntity entry);
+  // Добавить запись в очередь: последняя запись — с наибольшим seq; новая —
+  // { seq: последний seq + 1 (с 1), time: текущее время в ISO, user, tool, args: toJson(args или {}),
+  // outcome: первые 500 символов, prev: hash последней записи или '' } и hash = digest(запись).
+  // Запись добавляется через insert: повтор seq даёт ошибку. Ошибка одной записи не останавливает очередь.
+  virtual promise<void> record(string user, string tool, Any args, string outcome);
+  // Проверить цепочку по возрастанию seq: seq идёт подряд с 1, prev равен hash предыдущей, digest равен hash.
+  // Первая неверная запись — { records, valid: false, brokenAt: seq }; иначе { records, valid: true }
+  virtual promise<AuditCheck> verify();
+}

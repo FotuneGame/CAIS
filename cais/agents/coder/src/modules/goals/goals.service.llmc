@@ -1,0 +1,16 @@
+import "../agent/types/goal.types";
+import "../../shared/llm/llm.service";
+import "../../shared/prompts/prompts.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class GoalsService : IService {
+  LlmService llm;
+  PromptsService prompts;
+  // ответ = await llm.chat([{ role: 'system', content: prompts.text('goal') }, { role: 'user', content: task }]).
+  // Вернуть { task, goal: ответ.goal, если это непустая строка, иначе task;
+  // criteria: ответ.criteria как строки, если это непустой массив, иначе ['задача выполнена'] }.
+  virtual promise<Goal> create(string task);
+  // Три абзаца через пустую строку: «Задача: <task>», «Цель: <goal>»,
+  // «Критерии готовности:» и с новой строки критерии, каждый с «- » в начале строки
+  virtual string describe(Goal goal);
+}

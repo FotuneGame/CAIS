@@ -1,0 +1,13 @@
+import "../../../shared/core/types/roles.types";
+// Таблица mcp_audit
+export virtual class AuditEntity : IDBEntity {
+  // идентификатор
+  int seq;
+  string time;
+  string user;
+  string tool;
+  string args;
+  string outcome;
+  string prev;
+  string hash;
+}

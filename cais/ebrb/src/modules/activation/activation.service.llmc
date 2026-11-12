@@ -1,0 +1,15 @@
+import "../inference/inference.functions";
+import "../inference/types/match.types";
+import "../rulebase/types/attributedata.types";
+import "../rulebase/types/ruledata.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ActivationService : IService {
+  // Нормированный вес атрибута δ̄ = δ / max δ: max — наибольший weight среди attributes, а если он 0
+  // или атрибутов нет — 1; вес неизвестного атрибута — 1.
+  // Степень правила k: 0, если у совпадения нет сходств; иначе θₖ · Π S̃ᵢ^δ̄ᵢ по сходствам matches[k].similarity,
+  // θₖ = rule.weight.
+  // Вес активации ωₖ = ρₖ · степеньₖ / Σ степеней, ρₖ = rule.reliability; если сумма степеней 0 — все веса 0.
+  virtual double[] activate(RuleData[] rules, Match[] matches, HashMap<string, AttributeData> attributes);
+}

@@ -1,0 +1,21 @@
+import "./notes.functions.llmc";
+
+// среднее без заметок равно нулю
+bool averageOfNothing() { return average(0, 0) == 0.0; }
+
+// факториал пяти равен 120
+bool factorialOfFive() { return factorial(5) == 120; }
+
+// половина семи — целое три
+bool halfOfSeven() { return half(7) == 3; }
+
+// энергия сторон 3 и 4 равна 5
+bool energyOfSides() {
+  double delta = energy({3, 4}) - 5.0;
+  return delta < 0.000001 && delta > -0.000001;
+}
+
+// время переводится в запись ISO 8601
+bool stampOfMoment() {
+  return stamp((date) "2026-01-31T10:00:00Z") == "создано 2026-01-31T10:00:00.000Z";
+}

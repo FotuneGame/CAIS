@@ -1,0 +1,15 @@
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+export virtual class DatasetService : IService {
+  // Запись диалога в текст: сообщения — record.messages, а если их нет, но есть prompt и completion —
+  // [{ role: 'user', content: prompt }, { role: 'assistant', content: completion }].
+  // Нет сообщений — ошибка BadRequest «строка <index + 1>: нет messages или prompt/completion».
+  // Каждое сообщение: «<|im_start|><role>», с новой строки content, затем «<|im_end|>» и перевод строки.
+  virtual string chat(Dict record, int index);
+  // Режим 'text': расширение файла должно быть .txt или .md, иначе ошибка BadRequest
+  // «для обучения на тексте нужен .txt или .md»; вернуть сам файл.
+  // Режим 'chat': расширение должно быть .jsonl, иначе ошибка BadRequest
+  // «для дообучения нужен .jsonl с messages или prompt/completion»; каждую непустую строку разобрать как JSON
+  // и перевести через chat; результат записать в <workDir>/dataset.txt (папку создать) и вернуть этот путь.
+  virtual promise<string> prepare(string file, string mode, string workDir);
+}

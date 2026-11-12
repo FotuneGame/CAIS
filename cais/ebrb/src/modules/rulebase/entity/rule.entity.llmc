@@ -1,0 +1,15 @@
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+// Таблица ebrb_rules
+export virtual class RuleEntity : IDBEntity {
+  // идентификатор
+  string id;
+  HashMap<string, double> antecedents;
+  HashMap<string, double> consequent;
+  double weight;
+  double reliability;
+  string source;
+  bool reviewed = false;
+  // изменено
+  date updatedAt;
+}

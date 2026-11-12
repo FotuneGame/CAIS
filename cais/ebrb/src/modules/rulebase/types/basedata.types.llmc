@@ -1,0 +1,10 @@
+import "./actiondata.types";
+import "./attributedata.types";
+import "./ruledata.types";
+
+export class BaseData {
+  AttributeData[] attributes;
+  ActionData[] actions;
+  RuleData[] rules;
+  string[] hypotheses;
+}

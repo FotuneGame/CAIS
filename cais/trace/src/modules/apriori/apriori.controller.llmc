@@ -1,0 +1,11 @@
+import "./apriori.service";
+import "./dto/aprioriinput.dto";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь apriori
+export virtual class AprioriController : IController {
+  AprioriService apriori;
+  // POST без пути
+  promise<Dict> analyze(AprioriInputDto body) { return this.apriori.analyze(body); }
+}

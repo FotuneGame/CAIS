@@ -1,0 +1,24 @@
+import "../../config/keycloak.config";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// зависимость keys: KeySet? — createRemoteJWKSet(new URL(адрес)) из jose
+export virtual class KeycloakService : IService {
+  KeycloakConfig config;
+  bool disabled() { return this.config.disabled; }
+  // Проверить подпись токена по ключам и издателя из config.issuers, вернуть содержимое.
+  // Если ключей нет — ошибка «Keycloak не настроен: KEYCLOAK_JWKS_URL».
+  // результат — Token: JWTPayload из jose (import type)
+  virtual promise<Any> verify(string token);
+  // localUser — Token: JWTPayload из jose (import type)
+  virtual Any localUser();
+  // Владелец данных: если токен выдан самому сервису (config.clientId не пуст и user.azp равен ему)
+  // и requested задан — requested, иначе String(user.sub).
+  // user — Token: JWTPayload из jose (import type)
+  virtual string owner(Any user, string? requested = null);
+  // Токен клиента по client_credentials: POST config.tokenUrl, тело formEncode с grant_type, client_id,
+  // client_secret; вернуть access_token. Токен кешируется до expires_in минус 30 секунд.
+  // Если config.tokenUrl или config.clientId пуст — вернуть пустую строку.
+  // Ответ не ok — ошибка «Keycloak: токен сервиса <статус>».
+  virtual promise<string> serviceToken();
+}

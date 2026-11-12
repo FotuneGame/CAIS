@@ -1,0 +1,17 @@
+import "./mcp.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь ; скрыт из документации
+export virtual class McpController : IController {
+  McpService service;
+  // Сервер = service.create(String(req.user.sub)); транспорт McpTransport; при закрытии ответа закрыть транспорт
+  // и сервер; подключить сервер к транспорту и передать ему запрос, ответ и тело
+  // POST без пути; req — исходный запрос; res — исходный ответ
+  // req — HttpRequest: Request из express (import type)
+  // res — HttpResponse: Response из express (import type)
+  virtual promise<void> handle(Any req, Any res, Any body);
+  // Ошибка MethodNotAllowed «метод не поддерживается»
+  // ANY без пути
+  virtual void other();
+}

@@ -1,0 +1,24 @@
+import "../activation/activation.service";
+import "../conflict/conflict.service";
+import "../inference/types/evaluation.types";
+import "../inference/types/value.types";
+import "../reasoning/reasoning.service";
+import "../rulebase/types/attributedata.types";
+import "../rulebase/types/ruledata.types";
+import "../similarity/similarity.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class EvidenceService : IService {
+  SimilarityService similarityService;
+  ActivationService activation;
+  ReasoningService reasoning;
+  ConflictService conflicts;
+  // Словарь атрибутов по имени; matches = similarityService.match для каждого правила;
+  // weights = activation.activate(rules, matches, словарь).
+  // Свидетельства: { consequent правила, weight: weights[k], completeness: matches[k].completeness };
+  // { belief, ignorance } = reasoning.combine(свидетельства, hypotheses);
+  // conflict = conflicts.measure(rules, weights, hypotheses).
+  // activated: { id, activation: вес с тремя знаками после запятой, reviewed } для правил с activation > 0.01.
+  virtual Evaluation evaluate(RuleData[] rules, HashMap<string, Value> extracted, AttributeData[] attributes, string[] hypotheses);
+}

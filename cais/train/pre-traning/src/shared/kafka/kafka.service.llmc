@@ -1,0 +1,31 @@
+import "../../config/app.config";
+import "../../config/kafka.config";
+import "../log/log.service";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// зависимость client: KafkaClient? — Kafka из kafkajs: new Kafka({ clientId, brokers, logLevel: logLevel.WARN })
+// зависимость producer: KafkaProducer? — Producer из kafkajs: kafka.producer({ allowAutoTopicCreation: true }), connect(), send({ topic, messages: [{ value }] }), disconnect()
+export virtual class KafkaService : IService {
+  KafkaConfig config;
+  AppConfig app;
+  LogService log;
+  // consumers — KafkaConsumer: Consumer из kafkajs: kafka.consumer({ groupId }), connect(), subscribe({ topic, fromBeginning: true }), run({ eachMessage: async ({ message }) => ... }), disconnect()
+  Any[] consumers = {};
+  virtual bool enabled();
+  // Событие группы агентов: запись { time: текущее время в ISO, agent: app.name, ...event }.
+  // Записать в журнал log.log(String(event.type), 'Kafka', запись).
+  // Если Kafka включена — отправить запись в тему config.topic через send; ошибку отправки
+  // записать log.error(«отправка: <сообщение>», стек, 'Kafka') и не пробрасывать.
+  virtual void publish(Dict event);
+  // Отправить JSON сообщения в тему. При ошибке сбросить отправителя и пробросить ошибку.
+  // Без брокеров — ошибка «Kafka не настроена: KAFKA_BROKERS».
+  virtual promise<void> send(string topic, Dict message);
+  // listener — функция (value: string) => Promise<void> | void.
+  // Создать тему с configEntries [{ name: 'retention.ms', value: '3600000' }], затем читателя с groupId = group:
+  // подписка с начала темы, для каждого сообщения вызвать listener(текст значения или пустая строка).
+  // Без брокеров — ошибка «Kafka не настроена: KAFKA_BROKERS».
+  virtual promise<void> subscribe(string topic, string group, Handler listener);
+  // вызывается при остановке приложения
+  virtual promise<void> close();
+}

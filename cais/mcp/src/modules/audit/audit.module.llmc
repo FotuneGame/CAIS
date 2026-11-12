@@ -1,0 +1,6 @@
+import "./audit.service";
+import "./entity/audit.entity";
+import "../../shared/core/types/roles.types";
+
+// таблицы — AuditEntity; providers — AuditService; exports — AuditService
+export virtual class AuditModule : IModule {}

@@ -1,0 +1,14 @@
+import "../../config/app.config";
+import "../../config/keycloak.config";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь .well-known/oauth-protected-resource; открыт
+export virtual class OauthController : IController {
+  AppConfig app;
+  KeycloakConfig keycloak;
+  // { resource: app.publicUrl, authorization_servers: первый издатель из keycloak.issuers (список),
+  // bearer_methods_supported: ['header'], resource_name: 'CAIS MCP' }
+  // GET без пути
+  virtual Dict metadata();
+}

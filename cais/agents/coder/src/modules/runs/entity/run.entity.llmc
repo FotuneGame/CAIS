@@ -1,0 +1,17 @@
+import "../../agent/types/agentresult.types";
+import "../../../shared/core/types/roles.types";
+
+// Таблица coder_runs
+export virtual class RunEntity : IDBEntity {
+  // идентификатор; uuid
+  string id;
+  string owner;
+  string task;
+  string status;
+  AgentResult? result;
+  string? error;
+  // создано
+  date createdAt;
+  // изменено
+  date updatedAt;
+}

@@ -1,0 +1,19 @@
+import "../bootstrap/bootstrap.service";
+import "../causal/causal.service";
+import "../collective/collective.service";
+import "../counterfactual/counterfactual.service";
+import "../effects/effects.service";
+import "../events/events.module";
+import "../explanation/explanation.service";
+import "../history/history.service";
+import "../information/information.service";
+import "./macie.controller";
+import "./macie.service";
+import "../outcome/outcome.service";
+import "../random/random.service";
+import "../regression/regression.service";
+import "../shapley/shapley.service";
+import "../../shared/core/types/roles.types";
+
+// imports — EventsModule; controllers — MacieController; providers — HistoryService, RegressionService, RandomService, InformationService, BootstrapService, OutcomeService, CausalService, CounterfactualService, EffectsService, ShapleyService, CollectiveService, ExplanationService, MacieService; exports — HistoryService
+export virtual class MacieModule : IModule {}

@@ -1,0 +1,20 @@
+import "../actions/actions.service";
+import "../inference/types/value.types";
+import "../../shared/injection/injection.service";
+import "../../shared/llm/llm.service";
+import "../../shared/prompts/prompts.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class PlanService : IService {
+  LlmService llm;
+  PromptsService prompts;
+  ActionsService actions;
+  InjectionService injection;
+  // Если action задан — вернуть его; если нет input или список действий actions.current() пуст — null.
+  // Список: строки «- <name>: <description>»; ответ = await llm.chat([{ role: 'system',
+  // content: prompts.text('plan', { actions: список }) }, { role: 'user',
+  // content: injection.asData(input, пустая строка, «Атрибуты: <JSON extracted>») }]).
+  // Вернуть ответ.action, если это строка — имя действия из списка, иначе null.
+  virtual promise<string?> plan(string? input, HashMap<string, Value> extracted, string? action);
+}

@@ -1,0 +1,9 @@
+import "../shared/core/types/roles.types";
+export virtual class LlmConfig : IConfig {
+  // окружение LLM_URL, по умолчанию "http://localhost:81/dev/llama"
+  const string url;
+  // окружение LLM_MAX_TOKENS, по умолчанию 2048
+  const int maxTokens;
+  // окружение LLM_TIMEOUT_MS, по умолчанию 180000
+  const int timeoutMs;
+}

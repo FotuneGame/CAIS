@@ -1,0 +1,7 @@
+import "../../core/types/roles.types";
+export virtual class PromptUpdateDto : IDto {
+  // длина от 1 до 50
+  string name;
+  // длина от 1 до 8000
+  string text;
+}

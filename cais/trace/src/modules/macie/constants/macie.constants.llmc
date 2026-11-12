@@ -1,0 +1,5 @@
+export const string IDLE = "idle";
+
+export const double NEUTRAL = 1e-9;
+
+export const int CRITICAL_SHOWN = 3;

@@ -1,0 +1,11 @@
+import "../events/dto/eventfilter.dto";
+import "./report.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь report
+export virtual class ReportController : IController {
+  ReportService report;
+  // POST без пути; действие report
+  promise<Dict> create(EventFilterDto body) { return this.report.create(body.agent, body.minutes); }
+}

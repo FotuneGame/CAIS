@@ -138,6 +138,9 @@
   ansible.builtin.include_tasks: gpu.yml
   when: not host_is_wsl | bool
 
+- name: Инструменты компилятора LLMC (g++, MinGW, Node.js)
+  ansible.builtin.include_tasks: compiler.yml
+
 - name: Настройка WSL
   ansible.builtin.include_tasks: wsl.yml
   when: host_is_wsl | bool

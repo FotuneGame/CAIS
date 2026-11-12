@@ -1,0 +1,5 @@
+import "./app.module.llmc";
+
+// Приложение NestJS из AppModule с проверкой входных данных всех запросов.
+// Порт сервиса — переменная окружения PORT, по умолчанию 3000.
+virtual async promise<void> main() {}

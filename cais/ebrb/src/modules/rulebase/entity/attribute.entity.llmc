@@ -1,0 +1,12 @@
+import "../../../shared/core/types/roles.types";
+// Таблица ebrb_attributes
+export virtual class AttributeEntity : IDBEntity {
+  // идентификатор
+  string name;
+  string description;
+  double weight;
+  double[] referential;
+  bool required = true;
+  // изменено
+  date updatedAt;
+}

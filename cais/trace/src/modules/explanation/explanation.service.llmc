@@ -1,0 +1,18 @@
+import "../macie/constants/macie.constants";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ExplanationService : IService {
+  // report — отчёт без explanation. Числа — с тремя знаками после запятой. Строки объяснения:
+  // при verbosity 'full' — «Фактический исход Y = <outcome> за <steps> шагов; R² модели исхода <r2>;
+  // межагентных связей: <число рёбер>; CS = <cs>, II = <ii>.»;
+  // по агентам (при 'concise' — только первый): «<agent>: положительный|отрицательный вклад φ = <phi>
+  // (<|share|·100 с одним знаком>%), 95% ДИ эффекта [<ci[0]>; <ci[1]>]», кроме 'concise' —
+  // «; критические моменты: <моменты через ', '>» (при 'full' все, иначе первые CRITICAL_SHOWN и « …», если их больше), точка;
+  // если collective.si > si — «Обнаружена положительная эмерджентность: коллективный результат превышает сумму
+  // индивидуальных (SI = <si> > <порог>).», иначе «Эмерджентность не обнаружена: SI = <si>.»;
+  // кроме 'concise', для каждого значимого взаимодействия — «<a> и <b> действуют кооперативно: синергия σ = <sigma>.»
+  // при σ > 0, иначе «<a> и <b> мешают друг другу: синергия σ = <sigma>.»;
+  // для первого агента — «Без <agent> исход изменится на <−ate>: с <outcome> до <counterfactual>.».
+  virtual string[] build(Dict report, double si, string verbosity);
+}

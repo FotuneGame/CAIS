@@ -1,0 +1,17 @@
+import "../bootstrap/bootstrap.service";
+import "../counterfactual/counterfactual.service";
+import "../macie/types/causalmodel.types";
+import "../macie/types/effect.types";
+import "../macie/types/history.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class EffectsService : IService {
+  CounterfactualService counterfactual;
+  BootstrapService bootstrap;
+  // Для агента i: k траекторий при замене только его; counterfactual — их средний исход;
+  // ate = фактический исход − counterfactual; critical — моменты времени шагов, где накопленный исход траектории
+  // отличается от фактического больше чем на epsilon (без повторов, по возрастанию);
+  // ci — bootstrap.interval(разности награды шага и средней награды траекторий на этом шаге, b, rng).
+  virtual Effect[] estimate(History history, CausalModel model, int k, int b, double epsilon, Handler rng);
+}

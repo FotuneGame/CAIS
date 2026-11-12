@@ -1,0 +1,5 @@
+export class Activated {
+  string id;
+  double activation;
+  bool reviewed;
+}

@@ -1,0 +1,5 @@
+import "../../../shared/core/types/base.types";
+export class Belief {
+  HashMap<string, double> belief;
+  double ignorance;
+}

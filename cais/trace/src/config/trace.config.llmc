@@ -1,0 +1,7 @@
+import "../shared/core/types/roles.types";
+export virtual class TraceConfig : IConfig {
+  // окружение KAFKA_GROUP, по умолчанию "cais-trace"
+  const string group;
+  // окружение KEEP_DAYS, по умолчанию 30
+  const int keepDays;
+}

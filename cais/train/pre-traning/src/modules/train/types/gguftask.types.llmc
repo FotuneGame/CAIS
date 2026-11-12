@@ -1,0 +1,9 @@
+import "./ggufoptions.types";
+
+export class GgufTask {
+  string baseModel;
+  string dataset;
+  string output;
+  string mode;
+  GgufOptions options;
+}

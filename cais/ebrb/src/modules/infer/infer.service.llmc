@@ -1,0 +1,42 @@
+import "../../config/ebrb.config";
+import "../actions/actions.service";
+import "../attributes/attributes.service";
+import "../evidence/evidence.service";
+import "../explain/explain.service";
+import "../extraction/extraction.service";
+import "../inference/dto/inferinput.dto";
+import "../plan/plan.service";
+import "../policy/policy.service";
+import "../rules/rules.service";
+import "../validation/validation.service";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class InferService : IService {
+  AttributesService attributes;
+  RulesService rules;
+  ActionsService actions;
+  ExtractionService extraction;
+  ValidationService validation;
+  PlanService planner;
+  EvidenceService evidence;
+  PolicyService policy;
+  ExplainService explainer;
+  KafkaService kafka;
+  EbrbConfig config;
+  // Нет ни input, ни attributes — ошибка BadRequest «нужен input или attributes»; схема = attributes.current().
+  // raw = body.attributes или await extraction.extract(input, схема);
+  // { extracted, problems } = validation.validate(raw, схема).
+  // Если problems не пуст — результат { decision: 'REFINE', reason: 'атрибуты не прошли проверку схемы',
+  // problems, attributes: extracted }.
+  // Иначе: action = await planner.plan(input, extracted, body.action);
+  // оценка = evidence.evaluate(rules.current(), extracted, схема, rules.hypotheses()); safe = actions.safe(action).
+  // Пороги — из body.thresholds, недостающие — из config;
+  // решение = policy.decide(оценка.belief, оценка.ignorance, оценка.conflict, action, safe, пороги).
+  // explanation = при decision 'APPROVE' — await explainer.explain({ action, hypothesis, belief, ignorance,
+  // conflict, rules: оценка.activated }), иначе null.
+  // Результат { ...решение, action, attributes: extracted, ...оценка, explanation }.
+  // Перед возвратом любого результата: kafka.publish({ type: 'decision', decision: результат.decision }).
+  virtual promise<Dict> infer(InferInputDto body);
+}

@@ -1,0 +1,4 @@
+export class Itemset {
+  string[] items;
+  double support;
+}

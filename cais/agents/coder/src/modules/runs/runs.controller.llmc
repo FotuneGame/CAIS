@@ -1,0 +1,25 @@
+import "../agent/types/action.types";
+import "./dto/runstart.dto";
+import "./dto/runstatus.dto";
+import "./entity/run.entity";
+import "./runs.service";
+import "../../shared/core/core.functions";
+import "../../shared/keycloak/keycloak.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь runs
+export virtual class RunsController : IController {
+  RunsService runs;
+  KeycloakService keycloak;
+  // POST без пути; действие runs.start; user — вызывающий
+  // user — Token: JWTPayload из jose (import type)
+  promise<RunEntity> start(RunStartDto body, Any user) {
+    return this.runs.start(body.task, this.keycloak.owner(user, body.owner), body.wait);
+  }
+  // POST status; действие runs.status; user — вызывающий
+  // user — Token: JWTPayload из jose (import type)
+  promise<RunEntity> status(RunStatusDto body, Any user) {
+    return this.runs.status(body.id, this.keycloak.owner(user, body.owner));
+  }
+}

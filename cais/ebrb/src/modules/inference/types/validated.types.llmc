@@ -1,0 +1,7 @@
+import "./value.types";
+import "../../../shared/core/types/base.types";
+
+export class Validated {
+  HashMap<string, Value> extracted;
+  string[] problems;
+}

@@ -1,0 +1,14 @@
+import "../../config/app.config";
+import "../../modules/elastic/elastic.service";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// зависимость database: Database — DataSource из typeorm: await dataSource.query('SELECT 1')
+export virtual class HealthService : IService {
+  AppConfig app;
+  ElasticService elastic;
+  // Вернуть словарь: имя проверки и её результат.
+  // postgres: запрос SELECT 1 через database.
+  // elasticsearch: elastic.request('GET', '/').
+  virtual promise<HashMap<string, string>> check();
+}

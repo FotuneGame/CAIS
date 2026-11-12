@@ -1,0 +1,11 @@
+import "./modules/agent/agent.module";
+import "./modules/runs/runs.module";
+import "./modules/sandbox/sandbox.module";
+import "./shared/core/core.module";
+import "./shared/database/database.module";
+import "./shared/llm/llm.module";
+import "./shared/prompts/prompts.module";
+import "./shared/core/types/roles.types";
+
+// imports — CoreModule, DatabaseModule, LlmModule, PromptsModule, SandboxModule, AgentModule, RunsModule
+export virtual class AppModule : IModule {}

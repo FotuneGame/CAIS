@@ -1,0 +1,7 @@
+import "../inference.functions";
+import "../../../shared/core/types/base.types";
+
+export class Match {
+  HashMap<string, double> similarity;
+  double completeness;
+}

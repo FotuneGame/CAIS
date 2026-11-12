@@ -1,0 +1,14 @@
+{
+  "about": "Запросы HTTP к другим сервисам",
+  "language": "typescript",
+  "mentions": [
+    "http",
+    "запрос"
+  ],
+  "packages": {},
+  "rules": [
+    "request — request(метод, адрес, заголовки, тело, предел времени мс) — запрос HTTP → fetch(адрес, { method, headers, body, signal: AbortSignal.timeout(мс) }); тело и предел времени — если заданы",
+    "formEncode — formEncode(словарь) — тело application/x-www-form-urlencoded → new URLSearchParams(словарь)",
+    "Reply — ответ HTTP: поля ok и status, методы text() и json() → Response глобального fetch"
+  ]
+}

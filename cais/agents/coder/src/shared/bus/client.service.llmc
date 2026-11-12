@@ -1,0 +1,32 @@
+import "../../config/app.config";
+import "../../config/kafka.config";
+import "../core/types/busreply.types";
+import "../core/types/busrequest.types";
+import "../kafka/kafka.service";
+import "../keycloak/keycloak.service";
+import "../log/log.service";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// Вызовы других сервисов CAIS: запрос уходит в тему cais.<сервис>.requests,
+// ответы приходят в тему cais.<app.name>.replies.
+// Тему ответов слушает группа <app.name>-replies-<случайный uuid>: подписка через kafka.subscribe
+// создаётся один раз и переиспользуется; если подписка не удалась — следующий запрос повторяет её.
+// Ожидающие запросы — Map по id: { resolve, reject, timer }; пришедший BusReply завершает запрос с тем же id,
+// неизвестные id и неверный JSON игнорируются.
+export virtual class BusClientService : IService {
+  KafkaService kafka;
+  KeycloakService keycloak;
+  KafkaConfig config;
+  AppConfig app;
+  LogService log;
+  bool enabled() { return this.kafka.enabled(); }
+  // Если kafka.enabled() — подписаться на тему ответов заранее; ошибку записать log.warn(«ответы: <сообщение>», 'Bus')
+  // вызывается при запуске приложения
+  virtual void listen();
+  // Дождаться подписки; отправить через kafka.send BusRequest { id: uuid, replyTo, action,
+  // deadline: сейчас + config.timeoutMs, token: await keycloak.serviceToken(), body }.
+  // Результат: ответ ok — data; не ok — ошибка с текстом error или «ошибка сервиса»;
+  // нет ответа за config.timeoutMs — ошибка «<сервис> не ответил за <секунд> с»; ошибка отправки — сразу ошибка.
+  virtual promise<Any> request(string service, string action, Any body);
+}

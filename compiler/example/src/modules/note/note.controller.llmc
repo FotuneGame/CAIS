@@ -1,0 +1,16 @@
+import "./note.service.llmc";
+import "../notes/dto/noteinput.dto.llmc";
+import "../notes/entity/note.entity.llmc";
+import "../notes/types/summary.types.llmc";
+import "../../shared/roles.types.llmc";
+
+// Путь notes
+export class NoteController : IController {
+  NoteService service;
+  // POST без пути
+  promise<NoteEntity> add(NoteInputDto input) { return this.service.add(input); }
+  // GET без пути
+  promise<NoteEntity[]> list() { return this.service.list(); }
+  // GET summary, запрос открыт
+  promise<Summary> summary() { return this.service.summary(); }
+}

@@ -1,0 +1,9 @@
+import "../../../shared/core/types/roles.types";
+export virtual class ThresholdsInputDto : IDto {
+  // от 0 до 1
+  double? confidence;
+  // от 0 до 1
+  double? ignorance;
+  // от 0 до 1
+  double? conflict;
+}

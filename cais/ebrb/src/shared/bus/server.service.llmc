@@ -1,0 +1,35 @@
+import "../../config/app.config";
+import "../core/types/busreply.types";
+import "../core/types/busrequest.types";
+import "../kafka/kafka.service";
+import "../keycloak/keycloak.service";
+import "../log/log.service";
+import "../core/types/roles.types";
+
+// Приём запросов других сервисов CAIS из темы cais.<app.name>.requests (группа <app.name>-requests)
+// и вызов методов контроллеров с метаданными action.
+// Действия ищутся при запуске: у каждого контроллера из discovery.getControllers() перебрать имена методов
+// прототипа; имя действия — Reflect.getMetadata('action', метод),
+// класс тела — Reflect.getMetadata('design:paramtypes', прототип, имя метода)[0].
+// зависимость discovery: Discovery — DiscoveryService из @nestjs/core: getControllers() возвращает обёртки с полем instance
+export virtual class BusServerService : IService {
+  KafkaService kafka;
+  KeycloakService keycloak;
+  AppConfig app;
+  LogService log;
+  // Собрать действия; если kafka.enabled() и действия есть — подписаться через kafka.subscribe и записать
+  // log.log(«запросы <тема>», 'Bus'); при ошибке — log.warn(«<сообщение>, повтор через 10 с», 'Bus') и повтор через 10 секунд
+  // вызывается при запуске приложения
+  virtual void listen();
+  // Разобрать BusRequest; молча отбросить, если JSON неверен, replyTo не подходит под
+  // ^cais\.[a-z][a-z0-9-]*\.replies$ или deadline уже прошёл.
+  // Пользователь: при keycloak.disabled() — keycloak.localUser(), иначе await keycloak.verify(token),
+  // ошибка — «нужен действующий токен Keycloak».
+  // Нет действия — ошибка «нет действия <имя>»; тело проверить классом тела через validated.
+  // Вызвать метод контроллера с аргументами (проверенное тело, { user }) и дождаться результата.
+  // Ответ BusReply { id, ok: true, data } или { id, ok: false, error: сообщение ошибки } отправить в replyTo
+  // через kafka.send; ошибку отправки записать log.error.
+  virtual promise<void> serve(string value);
+  // вызывается при остановке приложения
+  virtual void close();
+}

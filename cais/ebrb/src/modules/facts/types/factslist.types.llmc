@@ -1,0 +1,5 @@
+import "./factsinfo.types";
+
+export class FactsList {
+  FactsInfo[] facts;
+}

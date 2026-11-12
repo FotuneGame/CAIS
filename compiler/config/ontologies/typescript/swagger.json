@@ -1,0 +1,18 @@
+{
+  "about": "Документация API Swagger",
+  "language": "typescript",
+  "mentions": [
+    "swagger",
+    "документац"
+  ],
+  "packages": {
+    "@nestjs/swagger": {
+      "version": "^12.0.3",
+      "url": "https://registry.npmjs.org/@nestjs/swagger",
+      "about": "Документация API Swagger"
+    }
+  },
+  "rules": [
+    "ApiDocs — страница документации API → DocumentBuilder и SwaggerModule из @nestjs/swagger: new DocumentBuilder().setTitle(имя).setVersion('1.0').addBearerAuth().build(); SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, config), { swaggerOptions: { persistAuthorization: true, docExpansion: 'none' }, customSiteTitle: имя })"
+  ]
+}

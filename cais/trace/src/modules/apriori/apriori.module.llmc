@@ -1,0 +1,11 @@
+import "./apriori.controller";
+import "./apriori.service";
+import "../events/events.module";
+import "../itemsets/itemsets.service";
+import "../kmeans/kmeans.service";
+import "../measures/measures.service";
+import "../observations/observations.service";
+import "../../shared/core/types/roles.types";
+
+// imports — EventsModule; controllers — AprioriController; providers — ObservationsService, ItemsetsService, KmeansService, MeasuresService, AprioriService
+export virtual class AprioriModule : IModule {}

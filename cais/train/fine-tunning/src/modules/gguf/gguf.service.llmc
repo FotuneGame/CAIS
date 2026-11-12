@@ -1,0 +1,26 @@
+import "../dataset/dataset.service";
+import "../llama/llama.service";
+import "../storage/storage.service";
+import "../train/types/gguftask.types";
+import "../train/types/trained.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class GgufService : IService {
+  LlamaService llama;
+  DatasetService datasets;
+  StorageService storage;
+  // Папка работы — <storage.modelsDir()>/.work/<output> (создать); data = await datasets.prepare(dataset, mode, папка);
+  // файл модели — <storage.modelsDir()>/<output>.gguf; metrics — пустой словарь.
+  // Если options.evaluate — metrics.perplexityBefore = await llama.perplexity(baseModel, data, context, log).
+  // log({ stage: 'finetune', base: baseModel, data }); await llama.finetune({ model: baseModel, data, output: файл, context,
+  // batch, epochs, lr }, папка работы, log).
+  // Если файла модели нет — переместить в него <папка работы>/finetuned-model.gguf или ggml-model-f32.gguf;
+  // нет ни одного — ошибка «llama-finetune не создал <файл>».
+  // Если options.evaluate — metrics.perplexity = await llama.perplexity(файл, data, context, log).
+  // metrics.sizeMb — размер файла в мегабайтах, округлённый.
+  // Если options.quantize задан — quantized = <storage.modelsDir()>/<output>-<quantize>.gguf;
+  // log({ stage: 'quantize', type: quantize }); await llama.quantize(файл, quantized, quantize, log).
+  // Вернуть { file: файл, quantized или null, metrics }.
+  virtual promise<Trained> train(GgufTask task, Handler log);
+}

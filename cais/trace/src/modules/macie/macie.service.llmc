@@ -1,0 +1,40 @@
+import "../causal/causal.service";
+import "../collective/collective.service";
+import "../counterfactual/counterfactual.service";
+import "../effects/effects.service";
+import "../events/events.service";
+import "../explanation/explanation.service";
+import "../history/history.service";
+import "./types/history.types";
+import "./types/macieoptions.types";
+import "../random/random.service";
+import "../shapley/shapley.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class MacieService : IService {
+  EventsService events;
+  HistoryService history;
+  RandomService random;
+  CausalService causal;
+  CounterfactualService counterfactual;
+  EffectsService effects;
+  ShapleyService shapleyService;
+  CollectiveService collective;
+  ExplanationService explanation;
+  virtual promise<Dict> analyze(MacieOptions options);
+  // Нет агентов или шагов меньше 2 — ошибка BadRequest «мало событий для анализа: нужно хотя бы 2 шага».
+  // rng = random.create(options.seed); model = causal.fit(h); n — число агентов, A — все агенты.
+  // Эффекты = effects.estimate(h, model, k, b, epsilon, rng); ate — их ate.
+  // known — Map: counterfactual.key(A без i) → counterfactual эффекта i;
+  // outcome = counterfactual.outcomes(h, model, k, rng, known); empty = outcome([]).
+  // m = options.m или ceil(n·ln(max(2, n))); Шепли: при options.shapley —
+  // shapleyService.compute(n, C → outcome(C) − empty, m, rng), иначе ate.
+  // Коллектив = collective.measure(h, model, outcome, ate, options.synergy).
+  // Нормировка: z = Σ|φ|; share = φ / z, а при z = 0 — 1/n. Агенты ранжируются по убыванию |φ|:
+  // { agent, phi, share, ...эффект }.
+  // Отчёт { agents, steps: число шагов, outcome: outcome(A), model: { r2, edges: пары имён агентов },
+  // effects, collective, efficiency: { gain: outcome(A) − empty, shapley: Σφ, residual: gain − Σφ },
+  // emergence: collective.si > options.si, explanation: explanation.build(отчёт, options.si, options.verbosity) }.
+  virtual Dict explain(History h, MacieOptions options);
+}

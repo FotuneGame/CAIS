@@ -1,0 +1,12 @@
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+export virtual class RuleInputDto : IDto {
+  // шаблон ^[a-z][a-z0-9_]{1,49}$
+  string id;
+  HashMap<string, double> antecedents;
+  HashMap<string, double> consequent;
+  // от 0
+  double weight = 1.0;
+  // от 0 до 1
+  double reliability = 1.0;
+}

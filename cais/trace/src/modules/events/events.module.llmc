@@ -1,0 +1,10 @@
+import "../../config/clickhouse.config";
+import "../../config/trace.config";
+import "../clickhouse/clickhouse.service";
+import "../consumer/consumer.service";
+import "./events.controller";
+import "./events.service";
+import "../../shared/core/types/roles.types";
+
+// controllers — EventsController; providers — ClickhouseConfig, ClickhouseService, TraceConfig, EventsService, ConsumerService; exports — ClickhouseService, EventsService
+export virtual class EventsModule : IModule {}

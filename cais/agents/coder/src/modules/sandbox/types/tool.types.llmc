@@ -1,0 +1,6 @@
+import "../../../shared/core/types/base.types";
+export class Tool {
+  string[] args;
+  string description;
+  Handler run;
+}

@@ -1,0 +1,8 @@
+import "./app.module";
+import "./shared/core/core.functions";
+
+// Точка входа агента-программиста coder:
+// цель → план шагов → допуск EBRB → исполнение в песочнице → проверка → рефлексия → память
+export async promise<void> main() {
+  await start(AppModule);
+}

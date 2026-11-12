@@ -1,0 +1,25 @@
+{
+  "about": "Журнал winston",
+  "language": "typescript",
+  "mentions": [
+    "winston",
+    "журнал"
+  ],
+  "packages": {
+    "winston": {
+      "version": "^3.19.0",
+      "url": "https://registry.npmjs.org/winston",
+      "about": "журнал: import * as winston from 'winston'"
+    },
+    "winston-daily-rotate-file": {
+      "version": "^5.0.0",
+      "url": "https://registry.npmjs.org/winston-daily-rotate-file",
+      "about": "файлы журнала по дням: import DailyRotateFile from 'winston-daily-rotate-file'"
+    }
+  },
+  "rules": [
+    "Журнал приложения — журнал приложения → implements LoggerService из @nestjs/common: методы log, warn, error, debug",
+    "Journal — журнал: записи уровней info, warn, error, debug с метаданными → winston.Logger: import * as winston from 'winston'; winston.createLogger({ level, defaultMeta, format: winston.format.combine(timestamp(), errors({ stack: true }), json()), transports }); консоль — new winston.transports.Console({ format })",
+    "DailyFile — файлы журнала по дням → import DailyRotateFile from 'winston-daily-rotate-file'; new DailyRotateFile({ filename, datePattern: 'YYYY-MM-DD', maxSize, maxFiles })"
+  ]
+}

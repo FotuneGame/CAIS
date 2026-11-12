@@ -1,0 +1,21 @@
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+// Таблица train_jobs
+export virtual class JobEntity : IDBEntity {
+  // идентификатор; uuid
+  string id;
+  string service;
+  string owner;
+  string trainer;
+  string? baseModel;
+  string dataset;
+  string model;
+  string status;
+  Dict[] progress = {};
+  HashMap<string, double>? metrics;
+  string? error;
+  // создано
+  date createdAt;
+  // изменено
+  date updatedAt;
+}

@@ -1,0 +1,23 @@
+import "../../config/app.config";
+import "../runner/runner.service";
+import "../train/entity/job.entity";
+import "../../shared/log/log.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// зависимость jobs: table<JobEntity> — Repository<E> из typeorm
+export virtual class JobsService : IService {
+  RunnerService runner;
+  LogService log;
+  AppConfig app;
+  // Задания сервиса app.name со status 'running' перевести в 'failed' с error «прервано перезапуском сервиса»
+  // вызывается при создании модуля
+  virtual promise<void> recover();
+  // Сохранить задание { ...request, id: uuid(), service: app.name, status: 'running', progress: [], metrics: null,
+  // error: null }; запустить runner.execute(id, request, work) в фоне (ошибку — в log.error с контекстом 'Jobs');
+  // вернуть задание
+  virtual promise<JobEntity> run(Dict request, Handler work);
+  // Задание по id и owner; нет — ошибка NotFound «задание не найдено»; progress — runner.current(id) или сохранённый
+  virtual promise<JobEntity> status(string id, string owner);
+  virtual promise<JobEntity[]> list(string owner);
+}

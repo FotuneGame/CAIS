@@ -1,0 +1,16 @@
+// Сервис NestJS: объект создаёт контейнер; зависимости — параметры конструктора
+export virtual interface IService;
+// Контроллер NestJS: принимает запросы HTTP; путь класса и запросы методов — в комментариях
+export virtual interface IController;
+// Модуль приложения NestJS: состав — в комментарии класса
+export virtual interface IModule;
+// Страж запросов NestJS: решает, допустить ли запрос
+export virtual interface IGuard;
+// Перехватчик запросов NestJS: действие вокруг каждого запроса
+export virtual interface IInterceptor;
+// Настройки сервиса NestJS: значения полей — из переменных окружения по комментариям
+export virtual interface IConfig;
+// Сущность базы данных: запись таблицы TypeORM, имя таблицы — в комментарии класса
+export virtual interface IDBEntity;
+// Входные данные сетевого запроса с проверкой полей (class-validator)
+export virtual interface IDto;

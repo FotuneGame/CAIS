@@ -1,0 +1,10 @@
+import "../anomalies/anomalies.service";
+import "../emergence/emergence.service";
+import "../events/events.module";
+import "./report.controller";
+import "./report.service";
+import "../stats/stats.service";
+import "../../shared/core/types/roles.types";
+
+// imports — EventsModule; controllers — ReportController; providers — StatsService, AnomaliesService, EmergenceService, ReportService
+export virtual class ReportModule : IModule {}

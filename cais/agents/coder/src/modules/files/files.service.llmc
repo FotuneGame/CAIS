@@ -1,0 +1,18 @@
+import "../sandbox/types/tool.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class FilesService : IService {
+  // Полный путь resolvePath(root, path); если он не равен resolvePath(root) и не начинается
+  // с resolvePath(root) + SEPARATOR — ошибка «путь вне песочницы: <path>»; вернуть полный путь
+  virtual string inside(string root, string path = ".");
+  // Текст длиннее size обрезать до size и добавить с новой строки «…обрезано»
+  virtual string limit(string text, int size = 4000);
+  // Инструменты файлов песочницы root:
+  // list — args ['path'], описание «список файлов папки»: файлы каталога inside(root, path) рекурсивно,
+  // кроме node_modules, пути относительно root по одному в строке; пусто — «(пусто)»;
+  // read — args ['path'], описание «прочитать файл»: limit(содержимое файла inside(root, path));
+  // write — args ['path', 'content'], описание «создать или перезаписать файл»: создать папку файла,
+  // записать String(content), вернуть «записано <длина> символов в <path>».
+  virtual HashMap<string, Tool> tools(string root);
+}

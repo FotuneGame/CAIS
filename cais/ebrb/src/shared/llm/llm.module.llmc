@@ -1,0 +1,6 @@
+import "../../config/llm.config";
+import "./llm.service";
+import "../core/types/roles.types";
+
+// глобальный; providers — LlmConfig, LlmService; exports — LlmService
+export virtual class LlmModule : IModule {}

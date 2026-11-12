@@ -1,0 +1,15 @@
+import "../../../shared/core/types/base.types";
+// Модель исхода r_t = f_Y(s_t, a_t) + u_t: веса регрессии, шум u_t по шагам и R²
+// Причинная модель: пространства действий агентов, родители Pa(a_j), рёбра a_i → a_j,
+// условные распределения f_aⱼ(s_t, Pa) и частоты действий
+export class CausalModel {
+  double[] weights;
+  double[] noise;
+  double r2;
+  string[] agents;
+  string[][] actions;
+  int[][] parents;
+  int[][] edges;
+  Any[] conditionals;
+  Any[] marginals;
+}

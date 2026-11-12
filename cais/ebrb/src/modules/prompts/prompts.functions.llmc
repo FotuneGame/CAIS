@@ -1,0 +1,2 @@
+import "../../shared/core/types/base.types";
+export virtual HashMap<string, string> defaultPrompts();

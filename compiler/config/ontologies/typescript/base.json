@@ -1,0 +1,464 @@
+{
+  "about": "Перевод языка LLMC в TypeScript: лексемы config/tokens.def, шаблоны объявлений, правила для LLM",
+  "language": "typescript",
+  "extensions": [
+    "ts"
+  ],
+  "scripts": {
+    "build": "tsc --outDir dist --rootDir src --target ES2023 --module nodenext --moduleResolution nodenext --strict --strictPropertyInitialization false --experimentalDecorators --emitDecoratorMetadata --esModuleInterop --skipLibCheck --sourceMap --types node src/main.ts",
+    "start": "node dist/main.js",
+    "test": "vitest run"
+  },
+  "packages": {
+    "typescript": {
+      "version": "^6.0.3",
+      "url": "https://registry.npmjs.org/typescript",
+      "about": "компилятор TypeScript; не импортируется",
+      "always": true
+    },
+    "@types/node": {
+      "version": "^24.19.2",
+      "url": "https://registry.npmjs.org/@types/node",
+      "about": "типы Node.js; не импортируется",
+      "always": true
+    },
+    "node": {
+      "builtin": true,
+      "about": "встроенные модули Node.js: import из node:fs, node:path, node:crypto и других"
+    },
+    "vitest": {
+      "version": "^3.2.4",
+      "url": "https://registry.npmjs.org/vitest",
+      "about": "тесты: файлы <имя>.test.llmc; LLM не импортирует"
+    }
+  },
+  "comments": {
+    "line": "//",
+    "open": "/*",
+    "close": "*/",
+    "quotes": "'\"`"
+  },
+  "keywords": {
+    "break": {
+      "about": "выход из цикла или ветви switch → break",
+      "emit": "break"
+    },
+    "case": {
+      "about": "ветвь switch для значения → case",
+      "emit": "case"
+    },
+    "char": {
+      "about": "символ → string из одного символа",
+      "emit": "string"
+    },
+    "const": {
+      "about": "значение не меняется → const для переменной, readonly для поля",
+      "emit": "const"
+    },
+    "continue": {
+      "about": "переход к следующему шагу цикла → continue",
+      "emit": "continue"
+    },
+    "default": {
+      "about": "ветвь switch для остальных значений → default",
+      "emit": "default"
+    },
+    "do": {
+      "about": "цикл с условием после тела → do while",
+      "emit": "do"
+    },
+    "double": {
+      "about": "вещественное двойной точности → number",
+      "emit": "number",
+      "cast": "Number({0})"
+    },
+    "else": {
+      "about": "ветвь условия, когда оно ложно → else",
+      "emit": "else"
+    },
+    "enum": {
+      "about": "перечисление → enum; если значения не заданы — строковые: ИМЯ = 'ИМЯ'",
+      "verify": "enum\\s+{name}\\b"
+    },
+    "float": {
+      "about": "вещественное → number",
+      "emit": "number",
+      "cast": "Number({0})"
+    },
+    "for": {
+      "about": "цикл со счётчиком → for",
+      "emit": "for"
+    },
+    "if": {
+      "about": "условие: if (условие) оператор → if",
+      "emit": "if"
+    },
+    "int": {
+      "about": "целое → number",
+      "emit": "number",
+      "cast": "Math.trunc({0})",
+      "cast:date": "{0}.getTime()"
+    },
+    "long": {
+      "about": "длинное целое → number",
+      "emit": "number",
+      "cast": "Math.trunc({0})",
+      "cast:date": "{0}.getTime()"
+    },
+    "return": {
+      "about": "возврат значения из функции → return",
+      "emit": "return"
+    },
+    "short": {
+      "about": "короткое целое → number",
+      "emit": "number",
+      "cast": "Math.trunc({0})",
+      "cast:date": "{0}.getTime()"
+    },
+    "signed": {
+      "about": "целое со знаком → number",
+      "emit": "number",
+      "cast": "Math.trunc({0})",
+      "cast:date": "{0}.getTime()"
+    },
+    "static": {
+      "about": "член класса, а не объекта → static",
+      "emit": "static"
+    },
+    "switch": {
+      "about": "выбор ветви по значению → switch",
+      "emit": "switch"
+    },
+    "typedef": {
+      "about": "новое имя типа → type Имя = Тип",
+      "verify": "type\\s+{name}\\b"
+    },
+    "unsigned": {
+      "about": "целое без знака → number",
+      "emit": "number",
+      "cast": "Math.trunc({0})",
+      "cast:date": "{0}.getTime()"
+    },
+    "void": {
+      "about": "нет значения → void",
+      "emit": "void"
+    },
+    "while": {
+      "about": "цикл с условием → while",
+      "emit": "while"
+    },
+    "class": {
+      "about": "класс: поля, конструктор и методы; члены без модификатора — public; class Имя<T> : Базовый, Интерфейс → class",
+      "verify": "class\\s+{name}\\b"
+    },
+    "public": {
+      "about": "член доступен всем → public",
+      "emit": "public"
+    },
+    "private": {
+      "about": "член доступен только классу → private",
+      "emit": "private"
+    },
+    "protected": {
+      "about": "член доступен классу и наследникам → protected",
+      "emit": "protected"
+    },
+    "virtual": {
+      "about": "объявление пишет LLM по комментарию над ним: import — файл целиком, переменная — значение, функция и метод — тело, class и interface — оформление и недостающие члены"
+    },
+    "override": {
+      "about": "метод заменяет метод базового типа → без слова в целевом коде",
+      "emit": ""
+    },
+    "interface": {
+      "about": "интерфейс: методы без тел, интерфейс без тела — признак роли класса → interface",
+      "verify": "interface\\s+{name}\\b"
+    },
+    "throw": {
+      "about": "выбросить ошибку → throw",
+      "emit": "throw"
+    },
+    "try": {
+      "about": "блок с перехватом ошибок → try",
+      "emit": "try"
+    },
+    "catch": {
+      "about": "перехват ошибки → catch (error); несколько catch — проверки instanceof по порядку",
+      "emit": "catch"
+    },
+    "finally": {
+      "about": "действия после блока в любом случае → finally",
+      "emit": "finally"
+    },
+    "import": {
+      "about": "import \"файл.llmc\" — объявления файла LLMC; import \"любой файл\" — файл проекта; virtual import \"путь\" — файл, который создаёт LLM → import { имена } from './путь'",
+      "verify": "(?:from|import|require\\()\\s*['\"]([^'\"]+)['\"]"
+    },
+    "export": {
+      "about": "объявление доступно другим файлам → export перед объявлением",
+      "emit": "export",
+      "verify": "export\\s+(?:default\\s+)?(?:declare\\s+)?(?:abstract\\s+)?(?:async\\s+)?(?:class|interface|type|enum|function|const|let)\\s+{name}\\b"
+    },
+    "null": {
+      "about": "нет значения → null",
+      "emit": "null"
+    },
+    "true": {
+      "about": "истина → true",
+      "emit": "true"
+    },
+    "false": {
+      "about": "ложь → false",
+      "emit": "false"
+    },
+    "bool": {
+      "about": "логическое значение → boolean",
+      "emit": "boolean",
+      "cast": "Boolean({0})"
+    },
+    "string": {
+      "about": "строка → string",
+      "emit": "string",
+      "cast": "String({0})",
+      "cast:date": "{0}.toISOString()"
+    },
+    "date": {
+      "about": "момент времени в UTC; new date() — сейчас; (string) — запись ISO 8601; (date) \"2026-01-31T10:00:00Z\" — разбор; (long) — миллисекунды → Date",
+      "emit": "Date",
+      "cast": "new Date({0})"
+    },
+    "promise": {
+      "about": "promise<T> — результат асинхронной операции → Promise<T>",
+      "emit": "Promise<{0}>"
+    },
+    "async": {
+      "about": "функция с ожиданием await; её результат — promise<T> → async",
+      "emit": "async"
+    }
+  },
+  "operators": {
+    "sizeof": {
+      "about": "sizeof(тип) — размер типа в байтах: char 1, short 2, int 4, long 8, float 4, double 8; sizeof(значение) — число элементов строки или массива → x.length",
+      "emit": "{0}.length"
+    },
+    "as": {
+      "about": "приведение к типу → as Тип",
+      "emit": "({0} as {1})"
+    },
+    "is": {
+      "about": "проверка типа → instanceof для классов, typeof для простых типов",
+      "emit": "({0} instanceof {1})",
+      "basic": "(typeof {0} === '{1}')"
+    },
+    "new": {
+      "about": "создание объекта или массива → new Тип(аргументы); new T[n] — new Array<T>(n)",
+      "emit": "new {0}({1})",
+      "array": "new Array<{0}>({1})"
+    },
+    "delete": {
+      "about": "удаление элемента словаря или освобождение объекта → delete словарь[ключ]; для объекта — ничего",
+      "emit": "delete"
+    },
+    "this": {
+      "about": "текущий объект → this",
+      "emit": "this"
+    },
+    "base": {
+      "about": "базовый класс → super",
+      "emit": "super"
+    },
+    "await": {
+      "about": "await x — дождаться результата promise<T> → await x",
+      "emit": "await "
+    },
+    "++": {
+      "about": "увеличение на единицу → ++",
+      "emit": "++"
+    },
+    "--": {
+      "about": "уменьшение на единицу → --",
+      "emit": "--"
+    },
+    "~": {
+      "about": "побитовое отрицание → ~",
+      "emit": "~"
+    },
+    "!": {
+      "about": "логическое отрицание → !",
+      "emit": "!"
+    },
+    "+": {
+      "about": "сложение чисел или соединение строк → +",
+      "emit": "+"
+    },
+    "-": {
+      "about": "вычитание или смена знака → -",
+      "emit": "-"
+    },
+    "*": {
+      "about": "умножение → *",
+      "emit": "*"
+    },
+    "/": {
+      "about": "деление; для целых операндов — целочисленное → для целых операндов Math.trunc(a / b)",
+      "emit": "/",
+      "integer": "Math.trunc({0} / {1})"
+    },
+    "%": {
+      "about": "остаток от деления → %",
+      "emit": "%"
+    },
+    "<<": {
+      "about": "сдвиг битов влево → <<",
+      "emit": "<<"
+    },
+    ">>": {
+      "about": "сдвиг битов вправо → >>",
+      "emit": ">>"
+    },
+    "&": {
+      "about": "побитовое И → &",
+      "emit": "&"
+    },
+    "|": {
+      "about": "побитовое ИЛИ → |",
+      "emit": "|"
+    },
+    "^": {
+      "about": "побитовое исключающее ИЛИ → ^",
+      "emit": "^"
+    },
+    "==": {
+      "about": "равенство → ===",
+      "emit": "==="
+    },
+    "!=": {
+      "about": "неравенство → !==",
+      "emit": "!=="
+    },
+    "<": {
+      "about": "меньше → <",
+      "emit": "<"
+    },
+    ">": {
+      "about": "больше → >",
+      "emit": ">"
+    },
+    "<=": {
+      "about": "меньше или равно → <=",
+      "emit": "<="
+    },
+    ">=": {
+      "about": "больше или равно → >=",
+      "emit": ">="
+    },
+    "&&": {
+      "about": "логическое И → &&",
+      "emit": "&&"
+    },
+    "||": {
+      "about": "логическое ИЛИ → ||",
+      "emit": "||"
+    },
+    "?": {
+      "about": "условие ? значение : иначе — выбор значения → ? :",
+      "emit": "?"
+    },
+    ":": {
+      "about": "вторая часть выбора ? : и список базовых типов после имени класса → : в выражении, extends и implements в объявлении",
+      "emit": ":"
+    },
+    "=": {
+      "about": "присваивание → =",
+      "emit": "="
+    },
+    "+=": {
+      "about": "сложение с присваиванием → +=",
+      "emit": "+="
+    },
+    "-=": {
+      "about": "вычитание с присваиванием → -=",
+      "emit": "-="
+    },
+    "*=": {
+      "about": "умножение с присваиванием → *=",
+      "emit": "*="
+    },
+    "/=": {
+      "about": "деление с присваиванием → /=",
+      "emit": "/="
+    },
+    "%=": {
+      "about": "остаток с присваиванием → %=",
+      "emit": "%="
+    },
+    "<<=": {
+      "about": "сдвиг влево с присваиванием → <<=",
+      "emit": "<<="
+    },
+    ">>=": {
+      "about": "сдвиг вправо с присваиванием → >>=",
+      "emit": ">>="
+    },
+    "&=": {
+      "about": "побитовое И с присваиванием → &=",
+      "emit": "&="
+    },
+    "^=": {
+      "about": "побитовое исключающее ИЛИ с присваиванием → ^=",
+      "emit": "^="
+    },
+    "|=": {
+      "about": "побитовое ИЛИ с присваиванием → |=",
+      "emit": "|="
+    }
+  },
+  "templates": {
+    "import": "import { {names} } from '{path}';",
+    "variable": "{export}{const} {name}: {type}{value};",
+    "local": "{const} {name}: {type}{value};",
+    "let": "let",
+    "typedef": "{export}type {name} = {type};",
+    "enum": "{export}enum {name} {\n{members}}",
+    "enumerator": "{name}{value},",
+    "enumeratorText": "{name} = '{name}',",
+    "interface": "{export}interface {name}{extends} {\n{members}}",
+    "class": "{export}class {name}{extends}{implements} {\n{members}}",
+    "extends": " extends {types}",
+    "implements": " implements {types}",
+    "field": "{access}{static}{readonly}{name}{optional}: {type}{value};",
+    "readonly": "readonly ",
+    "method": "{access}{static}{async}{name}({params}): {type} {body}",
+    "signature": "{name}({params}): {type};",
+    "constructor": "constructor({params}) {body}",
+    "function": "{export}{async}function {name}({params}): {type} {body}",
+    "async": "async ",
+    "param": "{name}{optional}: {type}{value}",
+    "optional": "?",
+    "nullable": "{type} | null",
+    "array": "{type}[]",
+    "list": "[{items}]",
+    "catch": "catch ({name})",
+    "main": "main();",
+    "test": "it('{title}', {async}() => expect({await}({async}(): {type} => {body})()).toBe(true));",
+    "testImport": "import { expect, it } from 'vitest';",
+    "virtual": "__virtual__",
+    "outline": "{ ... }",
+    "unknown": "unknown"
+  },
+  "rules": [
+    "Раздел «IR» — исходный файл на языке LLMC: комментарии программиста и пояснения лексем [llmc]. Раздел «Файл» — его перевод в TypeScript, сделанный компилятором; твоя задача — дописать этот перевод.",
+    "Пометка [virtual] в переводе — место для твоего кода: __virtual__ замени телом или значением; class и interface с пометкой оформи и дополни; файл из virtual import создай целиком.",
+    "Комментарий [пользователь] — задача от программиста: как реализовать объявление под ним.",
+    "Роль класса задают интерфейсы и классы, которые он наследует, и комментарии над ними: оформи класс так, как требует роль (декораторы, конструктор, зависимости), даже если у него нет пометки [virtual].",
+    "Код без пометки [virtual] написан человеком: тела таких функций и методов оставь без изменений, символ в символ.",
+    "Имена классов, методов, полей, функций и параметров не меняй; публичных членов не добавляй. Вспомогательные члены — только private.",
+    "Поле с типом класса проекта — зависимость: сделай её параметром конструктора.",
+    "Импортируй только пакеты из раздела «Пакеты», встроенные модули Node.js с префиксом node: и файлы, которые уже импортированы или создаются по virtual import; относительные импорты — без расширения.",
+    "Объявления из других файлов уже реализованы: используй только члены из раздела «Объявления импортированных файлов».",
+    "TypeScript со strict и emitDecoratorMetadata, модули CommonJS: интерфейсы и типы импортируй через import type, классы и enum — обычным import.",
+    "Комментарии программиста оставь, свои решения поясни короткими комментариями. Не оставляй заглушек и TODO.",
+    "Сообщения ошибок для пользователя — на русском.",
+    "Ответ — только содержимое файла: без пояснений вне кода и без Markdown."
+  ]
+}

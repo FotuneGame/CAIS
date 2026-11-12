@@ -1,0 +1,5 @@
+export class BaseCount {
+  int attributes;
+  int actions;
+  int rules;
+}

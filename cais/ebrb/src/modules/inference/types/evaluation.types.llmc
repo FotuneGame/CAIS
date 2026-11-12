@@ -1,0 +1,9 @@
+import "./activated.types";
+import "../../../shared/core/types/base.types";
+
+export class Evaluation {
+  HashMap<string, double> belief;
+  double ignorance;
+  double conflict;
+  Activated[] activated;
+}

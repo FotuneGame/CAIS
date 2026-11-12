@@ -1,0 +1,6 @@
+import "./sampleinput.dto";
+import "../../../shared/core/types/roles.types";
+
+export virtual class LearnInputDto : IDto {
+  SampleInputDto[] samples;
+}

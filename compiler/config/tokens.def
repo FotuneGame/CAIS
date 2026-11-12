@@ -1,0 +1,26 @@
+%skip
+SPACE     [ \t\r\n]+
+
+%token
+COMMENT   //.*
+FLOAT     [0-9]+\.[0-9]+([eE][+-]?[0-9]+)?[fF]?|[0-9]+[eE][+-]?[0-9]+[fF]?|[0-9]+[fF]
+INT       0[xX][0-9a-fA-F]+|[0-9]+
+CHAR      '([^'\\]|\\.)'
+STRING    "([^"\\]|\\.)*"
+IDENT     [A-Za-z_][A-Za-z0-9_]*
+
+%keyword
+break case char const continue default do double else enum float for if int long
+return short signed static switch typedef unsigned void while
+class public private protected virtual override interface throw try catch finally
+import export
+null true false
+bool string date promise async
+
+%operator
+sizeof as is new delete this base await
+++ -- ~ ! + - * / % << >> & | ^ == != < > <= >= && || ? :
+= += -= *= /= %= <<= >>= &= ^= |=
+
+%punct
+( ) [ ] { } ; , .

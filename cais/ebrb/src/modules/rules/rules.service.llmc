@@ -1,0 +1,28 @@
+import "../rulebase/dto/ruleinput.dto";
+import "../rulebase/dto/sampleinput.dto";
+import "../rulebase/entity/rule.entity";
+import "../rulebase/types/learned.types";
+import "../rulebase/types/ruledata.types";
+import "../../shared/core/types/roles.types";
+
+// зависимость rules: table<RuleEntity> — Repository<E> из typeorm
+export virtual class RulesService : IService {
+  RuleData[] cache = {};
+  RuleData[] current() { return this.cache; }
+  virtual string[] hypotheses();
+  // вызывается при создании модуля
+  virtual promise<RuleData[]> reload();
+  // Для каждого правила: убеждения — значения consequent; если их нет или есть значение вне 0..1 —
+  // ошибка BadRequest «<id>: убеждения следствия вне 0..1»; если сумма больше 1 + 1e-9 —
+  // ошибка BadRequest «<id>: сумма убеждений больше 1».
+  // Сохранить записи с source 'expert' и reviewed true; вернуть reload().
+  virtual promise<RuleData[]> save(RuleInputDto[] items);
+  // Поставить reviewed = true; ничего не изменено — ошибка NotFound «нет правила <id>»; вернуть reload()
+  virtual promise<RuleData[]> review(string id);
+  // Удалить запись; ничего не удалено — ошибка NotFound «нет правила <id>»; вернуть reload()
+  virtual promise<RuleData[]> remove(string id);
+  // Правила из данных: для образца i — { id: «learned_<millis() в системе счисления 36>_<i>»,
+  // antecedents: attributes, consequent: { [label]: 1 }, weight: 1, reliability: 1, source: 'learned', reviewed: false }.
+  // Сохранить, выполнить reload() и вернуть { added: id новых правил, reviewed: false }.
+  virtual promise<Learned> learn(SampleInputDto[] samples);
+}

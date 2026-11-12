@@ -1,0 +1,30 @@
+import "../../config/elastic.config";
+import "../elastic/elastic.service";
+import "../facts/types/fact.types";
+import "../facts/types/factsinfo.types";
+import "../facts/types/hit.types";
+import "../../shared/core/types/roles.types";
+
+// Индекс фактов. Все запросы идут в индекс config.index: путь «/<index>/<path>».
+// Перед первым запросом один раз создать индекс, если его нет (elastic.exists): PUT /<index> с mappings.properties:
+// title — keyword с полем search типа text, text — text, injection и reviewed — boolean;
+// при ошибке создания следующая попытка повторяет его.
+export virtual class StoreService : IService {
+  ElasticService elastic;
+  ElasticConfig config;
+  // Удалить старые части: POST _delete_by_query?refresh=true { query: { term: { title } } }.
+  // Записать новые через elastic.bulk: для каждого факта две строки — { index: { _index, _id: id } } и документ без id;
+  // если ответ.errors — ошибка «Elasticsearch: не все факты сохранены».
+  virtual promise<void> replace(string title, Fact[] facts);
+  // POST _search: size limit, bool-запрос: must — multi_match по полям ['text', 'title.search^2'],
+  // filter — term injection false и, при reviewedOnly, term reviewed true.
+  // Вернуть для каждого hit { ..._source, id: _id, score: _score }.
+  virtual promise<Hit[]> search(string query, int limit, bool reviewedOnly);
+  // POST _update_by_query?refresh=true: query term title,
+  // script { source: 'ctx._source.reviewed = true', lang: 'painless' }; вернуть updated
+  virtual promise<int> review(string title);
+  // POST _search с size 0 и агрегацией titles: terms по полю title (size 1000) с вложенными filter-агрегациями
+  // injection (term injection true) и reviewed (term reviewed true). Вернуть для каждого bucket
+  // { title: key, chunks: doc_count, injection: injection.doc_count > 0, reviewed: reviewed.doc_count === doc_count }.
+  virtual promise<FactsInfo[]> list();
+}

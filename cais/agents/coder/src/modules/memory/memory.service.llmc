@@ -1,0 +1,15 @@
+import "../agent/entity/memory.entity";
+import "../../shared/core/types/roles.types";
+
+// зависимость memories: table<MemoryEntity> — Repository<E> из typeorm
+export virtual class MemoryService : IService {
+  // Слова задачи — в нижнем регистре, из букв и цифр, не короче 3 символов (/[\p{L}\p{N}]{3,}/gu),
+  // без повторов, первые 20; слов нет — пустой список.
+  // Найти записи, text которых содержит любое слово (ILike «%слово%»), порядок: kind по возрастанию,
+  // затем createdAt по убыванию, не больше limit; вернуть строки «<kind>: <text>».
+  virtual promise<string[]> recall(string task, int limit = 3);
+  // Сохранить запись kind 'task' с text «<task> -> <answer или 'не завершено'>»
+  virtual promise<void> rememberTask(string task, string? answer);
+  // Сохранить запись kind 'lesson' с text «<task> — <note>»
+  virtual promise<void> rememberLesson(string task, string note);
+}

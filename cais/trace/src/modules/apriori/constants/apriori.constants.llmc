@@ -1,0 +1,1 @@
+export const int SLOW_STEP_MS = 30000;

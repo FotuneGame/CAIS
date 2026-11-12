@@ -1,0 +1,6 @@
+export class Added {
+  string title;
+  int chunks;
+  bool reviewed;
+  string[] injection;
+}

@@ -1,0 +1,16 @@
+import "../rulebase/dto/actioninput.dto";
+import "../rulebase/entity/action.entity";
+import "../rulebase/types/actiondata.types";
+import "../../shared/core/types/roles.types";
+
+// зависимость actions: table<ActionEntity> — Repository<E> из typeorm
+export virtual class ActionsService : IService {
+  ActionData[] cache = {};
+  ActionData[] current() { return this.cache; }
+  virtual bool safe(string? name);
+  // вызывается при создании модуля
+  virtual promise<ActionData[]> reload();
+  virtual promise<ActionData[]> save(ActionInputDto[] items);
+  // Удалить запись; ничего не удалено — ошибка NotFound «нет действия <name>»; вернуть reload()
+  virtual promise<ActionData[]> remove(string name);
+}

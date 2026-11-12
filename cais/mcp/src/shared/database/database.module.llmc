@@ -1,0 +1,5 @@
+import "../core/types/roles.types";
+// Подключение PostgreSQL: host — POSTGRES_HOST (localhost), port — POSTGRES_PORT (5432),
+// username — POSTGRES_USER (app), password — POSTGRES_PASSWORD (пусто), database — POSTGRES_DB (app).
+// подключение базы PostgreSQL; 
+export virtual class DatabaseModule : IModule {}

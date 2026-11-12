@@ -1,0 +1,17 @@
+import "../macie/macie.functions";
+import "../macie/types/causalmodel.types";
+import "../macie/types/history.types";
+import "../regression/regression.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class OutcomeService : IService {
+  RegressionService regression;
+  // Признаки шага: 1, затем по единице на состояние из ['negative', 'neutral', 'positive'],
+  // затем для каждого агента по единице на каждое действие его пространства space[i]
+  virtual double[] features(string[][] space, string state, string[] actions);
+  // x — признаки шагов, y — награды. R² считается на отложенных 20% шагов: при числе шагов не меньше 5
+  // обучить на первых 80% и оценить на остальных, иначе оценить на всех.
+  // Итоговые веса — регрессия на всех шагах; noise[t] = y[t] − прогноз. Вернуть { weights, noise, r2 }.
+  virtual CausalModel fit(History history, string[][] space);
+  virtual double reward(CausalModel model, int t, string state, string[] actions);
+}

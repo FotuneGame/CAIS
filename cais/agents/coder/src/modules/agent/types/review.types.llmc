@@ -1,0 +1,4 @@
+export class Review {
+  bool passed;
+  string note;
+}

@@ -1,0 +1,4 @@
+export class Verdict {
+  string decision;
+  string? reason;
+}

@@ -1,0 +1,22 @@
+import "../agent/agent.service";
+import "./entity/run.entity";
+import "../../shared/core/core.functions";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+
+// зависимость runs: table<RunEntity> — Repository<E> из typeorm
+export virtual class RunsService : IService {
+  AgentService agent;
+  KafkaService kafka;
+  // Задачи со status 'running' перевести в 'failed' с error «прервана перезапуском агента»
+  // вызывается при создании модуля
+  virtual promise<void> recover();
+  // Сохранить задачу { id: uuid(), owner, task, status: 'running', result: null, error: null }.
+  // В фоне: agent.run(id, task); успех — изменения { status: 'done', result }, ошибка —
+  // { status: 'failed', error: сообщение }; сохранить изменения и kafka.publish({ type: 'run', run: id, status }).
+  // Ждать завершения не дольше waitSeconds секунд (по умолчанию 0) через sleep;
+  // вернуть задачу с изменениями, если она завершилась, иначе как есть.
+  virtual promise<RunEntity> start(string task, string owner, int? waitSeconds);
+  // Найти задачу по id и owner; нет — ошибка NotFound «задача не найдена»
+  virtual promise<RunEntity> status(string id, string owner);
+}

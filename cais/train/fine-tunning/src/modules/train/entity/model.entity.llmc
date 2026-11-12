@@ -1,0 +1,15 @@
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+// Таблица train_models
+export virtual class ModelEntity : IDBEntity {
+  // идентификатор
+  string name;
+  string trainer;
+  string? baseModel;
+  string dataset;
+  string? file;
+  string? quantized;
+  HashMap<string, double>? metrics;
+  // изменено
+  date updatedAt;
+}

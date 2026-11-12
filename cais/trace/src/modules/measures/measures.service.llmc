@@ -1,0 +1,21 @@
+import "../apriori/types/method.types";
+import "../kmeans/kmeans.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class MeasuresService : IService {
+  KmeansService kmeans;
+  // Мера связи двух факторов: n — число наблюдений (не меньше 1), both — с обоими факторами, a и b — с каждым.
+  // support — both/n; jaccard — both/(a + b − both); lift — both·n/(a·b);
+  // phi — (both·neither − (a − both)(b − both)) / √(a·b·(n − a)·(n − b)), neither = n − a − b + both.
+  // Нулевой знаменатель — 0.
+  virtual double value(string name, HashSet<string>[] observations, string fi, string fj);
+  virtual double[][] matrix(string name, HashSet<string>[] observations, string[] factors);
+  virtual double kappa(HashSet<string> predicted, HashSet<string> expected, string[] pairs);
+  // Для каждой методики из support, jaccard, lift, phi: пары факторов — ключи «a|b» по алфавиту;
+  // predicted — столько пар с наибольшим значением меры, сколько пар у эксперта; θ — kappa(predicted, пары эксперта,
+  // все пары), без пар эксперта — 0; WCSS — kmeans.cluster(строки матрицы, делённые на max(1e-9, наибольший модуль),
+  // clusters).wcss / max(1, число факторов); δ = weights[0]·(1 − θ) + weights[1]·WCSS.
+  // Вернуть методики по возрастанию δ.
+  virtual Method[] select(HashSet<string>[] observations, string[] factors, string[][] expert, int clusters, double[] weights);
+}

@@ -1,0 +1,4 @@
+export class Learned {
+  string[] added;
+  bool reviewed;
+}

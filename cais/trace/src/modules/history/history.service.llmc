@@ -1,0 +1,19 @@
+import "../events/types/event.types";
+import "../macie/constants/macie.constants";
+import "../macie/macie.functions";
+import "../macie/types/history.types";
+import "../../shared/core/types/roles.types";
+
+export virtual class HistoryService : IService {
+  // Награда события: по ключу «<type>:<status или decision>», иначе по ключу «<type>», иначе 0. Таблица наград:
+  // run:done 1, run:failed -1, step:ALLOW 0.1, step:ESCALATE -0.3, step:BLOCK -0.3, violation -0.2,
+  // injection -0.5, decision:ESCALATE -0.1, job:done 0.5, job:failed -0.5.
+  virtual double reward(Event event);
+  // Действие события: «<type>:<tool>», если tool задан, иначе type
+  virtual string action(Event event);
+  // agents — агенты событий по алфавиту. Шаг — минута (первые 16 символов time), шаги по возрастанию времени.
+  // reward шага — сумма наград его событий; actions[i] — самое частое действие агента i в эту минуту
+  // (при равенстве — меньшее по алфавиту), без событий — IDLE; state шага — state(награда предыдущего шага),
+  // для первого шага предыдущая награда 0.
+  virtual History build(Event[] events);
+}

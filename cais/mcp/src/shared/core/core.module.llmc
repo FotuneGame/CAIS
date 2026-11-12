@@ -1,0 +1,20 @@
+import "../../common/guards/auth.guard";
+import "../../common/interceptors/log.interceptor";
+import "../../config/app.config";
+import "../../config/kafka.config";
+import "../../config/keycloak.config";
+import "../../config/log.config";
+import "../bus/client.service";
+import "../health/health.controller";
+import "../health/health.service";
+import "../injection/injection.service";
+import "../kafka/kafka.service";
+import "../keycloak/keycloak.service";
+import "../log/log.service";
+import "../metrics/metrics.controller";
+import "./types/roles.types";
+
+// Общий модуль сервиса CAIS: настройки, журнал, доступ, Kafka, шина, проверка готовности.
+// В imports добавить DiscoveryModule из @nestjs/core.
+// глобальный; controllers — HealthController, MetricsController; providers — AppConfig, LogConfig, LogService, KeycloakConfig, KeycloakService, KafkaConfig, KafkaService, AuthGuard, LogInterceptor, HealthService, InjectionService , BusClientService; exports — AppConfig, LogService, KeycloakConfig, KeycloakService, KafkaConfig, KafkaService, InjectionService , BusClientService
+export virtual class CoreModule : IModule {}

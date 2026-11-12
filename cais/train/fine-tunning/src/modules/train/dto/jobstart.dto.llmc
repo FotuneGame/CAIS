@@ -1,0 +1,12 @@
+import "./trainoptions.dto";
+import "../../../shared/core/types/roles.types";
+
+export virtual class JobStartDto : IDto {
+  // длина от 1 до 200
+  string baseModel;
+  // длина от 1 до 200
+  string dataset;
+  // шаблон ^[\\w.-]{1,100}$
+  string model;
+  TrainOptionsDto? options;
+}

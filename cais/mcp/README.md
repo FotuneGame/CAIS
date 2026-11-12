@@ -24,8 +24,7 @@
 
 ## Команды
 
-- Для запуска без Keycloak: `AUTH_DISABLED=true npm start`
-- Для тестов и проверки кода: `npm test`, `npm run lint`
+- Для компиляции и запуска: [cais/README.md](../README.md#команды)
 - Для списка инструментов: `curl -sk https://platform.local/dev/mcp -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'`
 
 ## Важно

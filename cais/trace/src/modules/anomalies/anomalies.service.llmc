@@ -1,0 +1,17 @@
+import "../events/types/event.types";
+import "../stats/stats.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class AnomaliesService : IService {
+  StatsService stats;
+  // Для каждого агента (группы событий по agent) вернуть аномалии { kind, agent, ... }:
+  // slow_step — шаг (type 'step' с конечным durationMs) дольше среднего на 3σ, если таких шагов не меньше 10 и σ > 0:
+  // { kind, agent, run, durationMs };
+  // loop — в одной задаче (группа шагов по run, без run — '-') один и тот же tool 4 раза подряд: { kind, agent, run, tool };
+  // violations — доля событий violation среди шагов и нарушений больше 0.3 при их числе не меньше 5:
+  // { kind, agent, share с двумя знаками };
+  // blocked_actions — число шагов с decision не 'ALLOW'; failed_runs — число событий run со status 'failed';
+  // injection — число событий injection: { kind, agent, count }, только если count > 0.
+  virtual Dict[] find(Event[] events);
+}

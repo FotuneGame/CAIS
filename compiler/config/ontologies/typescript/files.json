@@ -1,0 +1,15 @@
+{
+  "about": "Файлы и каталоги",
+  "language": "typescript",
+  "mentions": [
+    "файл",
+    "каталог"
+  ],
+  "packages": {},
+  "rules": [
+    "listFiles — listFiles(каталог) — пути файлов каталога рекурсивно → readdir(каталог, { recursive: true, withFileTypes: true }) из node:fs/promises, только файлы",
+    "fileExists — fileExists(путь) — есть ли файл → stat(путь) из node:fs/promises: успех — true, ошибка — false",
+    "fileSize — fileSize(путь) — размер файла в байтах → (await stat(путь)).size из node:fs/promises",
+    "writable — writable(путь) — проверить право записи, иначе ошибка → access(путь, constants.W_OK) из node:fs/promises"
+  ]
+}

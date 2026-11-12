@@ -1,0 +1,12 @@
+import "./health.service";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// Путь health; открыт
+export virtual class HealthController : IController {
+  HealthService health;
+  // GET live
+  virtual Dict live();
+  // GET без пути
+  virtual promise<Dict> check();
+}

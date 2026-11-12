@@ -1,0 +1,11 @@
+import "./modules/facts/facts.module";
+import "./modules/inference/inference.module";
+import "./modules/rulebase/rulebase.module";
+import "./shared/core/core.module";
+import "./shared/database/database.module";
+import "./shared/llm/llm.module";
+import "./shared/prompts/prompts.module";
+import "./shared/core/types/roles.types";
+
+// imports — CoreModule, DatabaseModule, LlmModule, PromptsModule, RulebaseModule, FactsModule, InferenceModule
+export virtual class AppModule : IModule {}

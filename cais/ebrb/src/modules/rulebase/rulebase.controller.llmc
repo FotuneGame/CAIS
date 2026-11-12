@@ -1,0 +1,50 @@
+import "../actions/actions.service"; import "../attributes/attributes.service";
+import "../base/base.service";
+import "./dto/actioninput.dto"; import "./dto/actionname.dto";
+import "./dto/attributeinput.dto";
+import "./dto/attributename.dto";
+import "./dto/baseinput.dto";
+import "./dto/learninput.dto";
+import "./dto/ruleid.dto";
+import "./dto/ruleinput.dto";
+import "./types/actiondata.types";
+import "./types/attributedata.types";
+import "./types/basecount.types";
+import "./types/basedata.types";
+import "./types/learned.types";
+import "./types/ruledata.types";
+import "../rules/rules.service";
+import "../../shared/core/types/roles.types";
+// Без пути
+export virtual class RulebaseController : IController {
+  AttributesService attributes;
+  ActionsService actions;
+  RulesService rules;
+  BaseService base_;
+  // GET base
+  BaseData dump() { return this.base_.dump(); }
+  // POST base
+  promise<BaseCount> load(BaseInputDto body) { return this.base_.load(body); }
+  // GET attributes
+  promise<AttributeData[]> listAttributes() { return this.attributes.reload(); }
+  // POST attributes
+  promise<AttributeData[]> saveAttribute(AttributeInputDto body) { return this.attributes.save({body}); }
+  // POST attributes/delete
+  promise<AttributeData[]> removeAttribute(AttributeNameDto body) { return this.attributes.remove(body.name); }
+  // GET actions
+  promise<ActionData[]> listActions() { return this.actions.reload(); }
+  // POST actions
+  promise<ActionData[]> saveAction(ActionInputDto body) { return this.actions.save({body}); }
+  // POST actions/delete
+  promise<ActionData[]> removeAction(ActionNameDto body) { return this.actions.remove(body.name); }
+  // GET rules
+  promise<RuleData[]> listRules() { return this.rules.reload(); }
+  // POST rules
+  promise<RuleData[]> saveRule(RuleInputDto body) { return this.rules.save({body}); }
+  // POST rules/review
+  promise<RuleData[]> reviewRule(RuleIdDto body) { return this.rules.review(body.id); }
+  // POST rules/delete
+  promise<RuleData[]> removeRule(RuleIdDto body) { return this.rules.remove(body.id); }
+  // POST learn
+  promise<Learned> learn(LearnInputDto body) { return this.rules.learn(body.samples); }
+}

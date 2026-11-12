@@ -1,0 +1,5 @@
+import "../../../shared/core/types/roles.types";
+export virtual class FactTitleDto : IDto {
+  // длина от 1 до 200
+  string title;
+}

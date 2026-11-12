@@ -1,0 +1,10 @@
+// Значение любого типа: type Any = any
+export virtual class Any;
+// Объект с произвольными полями: type Dict = Record<string, any>
+export virtual class Dict;
+// Хеш-таблица ключ → значение: type HashMap<K extends string | number, V> = Record<K, V>
+export virtual class HashMap;
+// Множество без повторов: type HashSet<T> = Set<T>
+export virtual class HashSet;
+// Функция обратного вызова: type Handler = (...args: any[]) => any
+export virtual class Handler;

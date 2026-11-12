@@ -1,0 +1,30 @@
+import "../../config/mcp.config";
+import "../mcp/mcp.service";
+import "../../shared/bus/client.service";
+import "../../shared/core/core.functions";
+import "../../shared/injection/injection.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Группы инструментов MCP. Метод register добавляет инструменты на сервер через server.registerTool;
+// guard(имя, обработчик) — обёртка вызова из McpService: журнал, событие и ответ в формате MCP;
+// обработчик принимает аргументы инструмента и возвращает Promise с данными.
+// Задачи агентам
+export virtual class TaskToolsService : IService {
+  BusClientService bus;
+  InjectionService injection;
+  McpConfig config;
+  // agents — «Агенты CAIS, которым можно поручить задачу»: вернуть config.agents.
+  // task_start — «Поручить задачу агенту (coder пишет и запускает код в песочнице). Ждёт до wait секунд,
+  // иначе вернёт id для task_result»; аргументы: agent — строка до 50 символов, по умолчанию 'coder';
+  // task — строка 1..4000; wait — целое 0..50, по умолчанию 45.
+  // Если injection.findings(task) не пуст — ошибка «задача отклонена, признаки инъекции: <признаки через ', '>».
+  // Иначе summary(await bus.request(агент, 'runs.start', { task, wait, owner })).
+  // task_result — «Состояние и результат задачи по id из task_start»; аргументы: agent, id — uuid;
+  // summary(await bus.request(агент, 'runs.status', { id, owner })).
+  // Агента нет в config.agents — ошибка «нет агента <имя>, есть: <агенты через ', '>».
+  // summary(run): без run.result — { id, status, error }; иначе { id, status, goal: result.goal.goal, answer, passed,
+  // review, sandbox, steps: строки «<tool> → <decision>» }.
+  // server — McpServer: McpServer из @modelcontextprotocol/sdk/server/mcp.js: new McpServer({ name, version })
+  virtual void register(Any server, Handler guard, string owner);
+}

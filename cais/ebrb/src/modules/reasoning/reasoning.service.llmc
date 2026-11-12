@@ -1,0 +1,12 @@
+import "../inference/types/belief.types";
+import "../inference/types/evidence.types";
+import "../../shared/core/types/roles.types";
+
+export virtual class ReasoningService : IService {
+  // Для каждого свидетельства: βₙ = consequent[гипотеза n] (нет — 0) · completeness; m_D = 1 − weight · Σβₙ;
+  // prodN[n] *= weight · βₙ + m_D; prodD *= m_D; prodBar *= 1 − weight; начальные произведения равны 1.
+  // μ = 1 / (Σ prodN[n] − (N − 1) · prodD), N — число гипотез; m̄ = μ · prodBar.
+  // Если 1 − m̄ ≤ 1e-12 — убеждения всех гипотез 0 и ignorance 1; иначе
+  // belief[n] = μ · (prodN[n] − prodD) / (1 − m̄), ignorance = μ · (prodD − prodBar) / (1 − m̄).
+  virtual Belief combine(Evidence[] evidence, string[] hypotheses);
+}

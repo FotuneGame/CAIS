@@ -1,0 +1,16 @@
+import "../../config/sandbox.config";
+import "../files/files.service";
+import "../sandbox/types/tool.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ShellService : IService {
+  FilesService files;
+  SandboxConfig config;
+  // Один инструмент run — args ['command'], описание
+  // «команда sh в песочнице, таймаут <config.commandTimeoutMs / 1000> с (node, npm, тесты)».
+  // run: execute('sh', ['-c', command], { cwd: root, timeout: config.commandTimeoutMs, maxBuffer: 1 << 20 }).
+  // Успех — files.limit(«код 0», с новой строки stdout и stderr);
+  // ошибка — files.limit(«код <code или timeout>», с новой строки stdout и stderr или message).
+  virtual HashMap<string, Tool> tools(string root);
+}

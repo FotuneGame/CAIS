@@ -1,0 +1,16 @@
+import "../../config/clickhouse.config";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Запросы к ClickHouse по HTTP: POST <config.url>/?database=<database>&param_<имя>=<значение> с телом запроса SQL
+// и заголовками X-ClickHouse-User, X-ClickHouse-Key.
+// Если config.url пуст — ошибка «ClickHouse не настроен: CLICKHOUSE_URL»;
+// ответ не ok — ошибка «ClickHouse <статус>: <первые 300 символов ответа>».
+export virtual class ClickhouseService : IService {
+  ClickhouseConfig config;
+  // Выполнить «<sql> FORMAT JSONEachRow» с параметрами; вернуть строки ответа, разобранные как JSON
+  virtual promise<Any[]> query(string sql, HashMap<string, Any>? params = null);
+  // Строк нет — ничего не делать; иначе «INSERT INTO <table> FORMAT JSONEachRow» и строки JSON по одной в строке
+  virtual promise<void> insert(string table, Dict[] rows);
+  virtual promise<void> exec(string sql);
+}

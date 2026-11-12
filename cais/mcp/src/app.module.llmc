@@ -1,0 +1,8 @@
+import "./modules/audit/audit.module";
+import "./modules/mcp/mcp.module";
+import "./shared/core/core.module";
+import "./shared/database/database.module";
+import "./shared/core/types/roles.types";
+
+// imports — CoreModule, DatabaseModule, AuditModule, McpModule
+export virtual class AppModule : IModule {}

@@ -1,0 +1,20 @@
+import "./dto/aprioriinput.dto";
+import "../events/events.service";
+import "../itemsets/itemsets.service";
+import "../measures/measures.service";
+import "../observations/observations.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class AprioriService : IService {
+  EventsService events;
+  ObservationsService observed;
+  ItemsetsService itemsets;
+  MeasuresService measures;
+  // По умолчанию: minSupport 0.1, maxSize 3, clusters 2, weights [0.5, 0.5], expertPairs [].
+  // Наблюдения — observed.fromBinary(body.observations), если они заданы, иначе
+  // observed.fromEvents(await events.find(null, body.minutes)).
+  // Вернуть { observations: число наблюдений, itemsets: itemsets.frequent(...), matrix: itemsets.matrix(...),
+  // graph: itemsets.graph(matrix, minSupport), methods: measures.select(...), best: имя первой методики }.
+  virtual promise<Dict> analyze(AprioriInputDto body);
+}

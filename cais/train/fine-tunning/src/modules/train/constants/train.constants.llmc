@@ -1,0 +1,5 @@
+export const string TRAIN_MODE = "chat";
+
+export const int TRAIN_CONTEXT = 1024;
+
+export const int TRAIN_EPOCHS = 3;

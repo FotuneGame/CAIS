@@ -1,0 +1,9 @@
+import "./modules/apriori/apriori.module";
+import "./modules/events/events.module";
+import "./modules/macie/macie.module";
+import "./modules/report/report.module";
+import "./shared/core/core.module";
+import "./shared/core/types/roles.types";
+
+// imports — CoreModule, EventsModule, ReportModule, MacieModule, AprioriModule
+export virtual class AppModule : IModule {}

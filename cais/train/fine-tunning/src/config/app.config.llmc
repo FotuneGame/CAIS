@@ -1,0 +1,13 @@
+import "../shared/core/types/roles.types";
+export virtual class AppConfig : IConfig {
+  // окружение APP_NAME, по умолчанию "app"
+  const string name;
+  // окружение PORT, по умолчанию 3000
+  const int port;
+  // окружение PUBLIC_URL, по умолчанию "http://localhost:3000"
+  const string publicUrl;
+  // окружение APP_DATA_PATH, по умолчанию "./app-data"
+  const string dataPath;
+  // окружение DEV, по умолчанию false
+  const bool dev;
+}

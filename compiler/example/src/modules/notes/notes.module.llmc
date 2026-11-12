@@ -1,0 +1,7 @@
+import "../note/note.controller.llmc";
+import "../note/note.service.llmc";
+import "./entity/note.entity.llmc";
+import "../../shared/roles.types.llmc";
+
+// controllers — NoteController, providers и exports — NoteService, таблицы — NoteEntity
+export virtual class NotesModule : IModule {}

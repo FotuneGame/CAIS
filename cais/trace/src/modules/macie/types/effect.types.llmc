@@ -1,0 +1,6 @@
+export class Effect {
+  double ate;
+  double counterfactual;
+  string[] critical;
+  double[] ci;
+}

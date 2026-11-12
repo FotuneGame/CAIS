@@ -1,0 +1,20 @@
+import "../../config/app.config";
+import "../../modules/prompts/prompts.functions";
+import "./entity/prompt.entity";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+// Промпты сервиса: значения по умолчанию — defaultPrompts() проекта, сохранённые в таблице
+// (agent = app.name) их заменяют. Состояние: действующие тексты по именам.
+// зависимость prompts: table<PromptEntity> — Repository<E> из typeorm
+export virtual class PromptsService : IService {
+  AppConfig app;
+  HashMap<string, string> texts = defaultPrompts();
+  // вызывается при создании модуля
+  virtual promise<void> load();
+  virtual promise<HashMap<string, string>> reload();
+  // Имени нет среди промптов по умолчанию — ошибка BadRequest «нет промпта <name>».
+  // Сохранить запись { agent: app.name, name, text } и вернуть reload()
+  virtual promise<HashMap<string, string>> update(string name, string text);
+  virtual string text(string name, HashMap<string, Any>? vars = null);
+}

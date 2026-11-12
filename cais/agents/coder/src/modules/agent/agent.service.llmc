@@ -1,0 +1,40 @@
+import "../../config/agent.config";
+import "../../config/app.config";
+import "../act/act.service";
+import "./types/actcontext.types";
+import "./types/agentresult.types";
+import "../goals/goals.service";
+import "../memory/memory.service";
+import "../planner/planner.service";
+import "../reflection/reflection.service";
+import "../tools/tools.service";
+import "../../shared/core/core.functions";
+import "../../shared/injection/injection.service";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class AgentService : IService {
+  GoalsService goals;
+  PlannerService planner;
+  ActService actor;
+  ReflectionService reflection;
+  MemoryService memory;
+  ToolsService tools;
+  InjectionService injection;
+  KafkaService kafka;
+  AppConfig app;
+  AgentConfig config;
+  // Песочница root = «<app.dataPath>/sandbox/<run>», создать каталог.
+  // Признаки инъекции injection.findings(task): если есть — kafka.publish({ type: 'injection', run, findings }).
+  // инструменты = tools.create(root); цель = await goals.create(task);
+  // kafka.publish({ type: 'goal', run, goal: цель.goal }); память = await memory.recall(task).
+  // Контекст ActContext { run, root, tools, messages: planner.start(цель, память, инструменты), steps: [] }.
+  // До config.maxAttempts попыток: answer = await actor.act(контекст); если answer не null —
+  // review = await reflection.check(цель, answer, steps); изначально review = { passed: false, note: 'нет ответа' }.
+  // После каждой попытки: kafka.publish({ type: 'reflection', run, attempt, ...review });
+  // await memory.rememberLesson(task, review.note); если review.passed — закончить попытки,
+  // иначе planner.notice(messages, 'retry', { note: review.note }).
+  // В конце await memory.rememberTask(task, answer) и вернуть
+  // { goal, answer, passed: review.passed, review: review.note, steps, sandbox: root }.
+  virtual promise<AgentResult> run(string run, string task);
+}

@@ -1,0 +1,5 @@
+export class Goal {
+  string task;
+  string goal;
+  string[] criteria;
+}

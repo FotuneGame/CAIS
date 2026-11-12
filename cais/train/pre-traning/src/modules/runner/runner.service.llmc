@@ -1,0 +1,19 @@
+import "../models/models.service";
+import "../train/entity/job.entity";
+import "../train/types/trained.types";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// зависимость jobs: table<JobEntity> — Repository<E> из typeorm
+export virtual class RunnerService : IService {
+  ModelsService models;
+  KafkaService kafka;
+  virtual Any current(string id);
+  // work — функция (log) => Promise<Trained>. Ход задания — список последних 20 записей log, доступный через current.
+  // Успех: models.save({ name: request.model, trainer, baseModel, dataset, file, quantized, metrics }) и изменения
+  // { status: 'done', metrics }; ошибка: { status: 'failed', error: сообщение }.
+  // Сохранить задание { id, ...изменения, progress: ход }, убрать ход из памяти и
+  // kafka.publish({ type: 'job', run: id, model: request.model, status }).
+  virtual promise<void> execute(string id, Dict request, Handler work);
+}

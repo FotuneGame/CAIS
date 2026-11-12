@@ -1,0 +1,20 @@
+{
+  "about": "Метрики Prometheus",
+  "language": "typescript",
+  "mentions": [
+    "prometheus",
+    "метрик"
+  ],
+  "packages": {
+    "prom-client": {
+      "version": "^15.1.3",
+      "url": "https://registry.npmjs.org/prom-client",
+      "about": "Метрики Prometheus"
+    }
+  },
+  "rules": [
+    "collectMetrics — collectMetrics() — включить сбор метрик процесса, один раз при загрузке файла → collectDefaultMetrics() из prom-client",
+    "metricsText — metricsText() — метрики в формате Prometheus → register.metrics() из prom-client",
+    "METRICS_TYPE — тип содержимого метрик → register.contentType из prom-client"
+  ]
+}

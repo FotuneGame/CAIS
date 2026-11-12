@@ -1,0 +1,9 @@
+import "./modules/notes/notes.module.llmc";
+import "./shared/roles.types.llmc";
+// Контроллер HealthController: путь health, запрос GET без пути открыт, ответ { status: "ok" }
+virtual import "./modules/health/health.controller";
+
+// Корневой модуль: imports — NotesModule и подключение базы PostgreSQL, controllers — HealthController.
+// host — POSTGRES_HOST (localhost), port — POSTGRES_PORT (5432),
+// username — POSTGRES_USER (app), password — POSTGRES_PASSWORD, database — POSTGRES_DB (app).
+export virtual class AppModule : IModule {}

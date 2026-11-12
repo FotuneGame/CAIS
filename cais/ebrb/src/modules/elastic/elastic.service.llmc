@@ -1,0 +1,14 @@
+import "../../config/elastic.config";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Запросы к Elasticsearch по адресу config.url + path.
+// Ответ не ok — ошибка «Elasticsearch <статус>: <первые 300 символов ответа>»; пустой ответ — {}.
+export virtual class ElasticService : IService {
+  ElasticConfig config;
+  virtual promise<Any> request(string method, string path, Dict? body = null);
+  // POST /_bulk?refresh=true с Content-Type application/x-ndjson: строки по одной, перевод строки в конце;
+  // вернуть разобранный JSON
+  virtual promise<Any> bulk(string[] lines);
+  virtual promise<bool> exists(string path);
+}

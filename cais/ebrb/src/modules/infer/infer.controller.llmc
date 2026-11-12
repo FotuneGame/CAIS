@@ -1,0 +1,12 @@
+import "./infer.service";
+import "../inference/dto/inferinput.dto";
+import "../rulebase/entity/action.entity";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь infer
+export virtual class InferController : IController {
+  InferService inference;
+  // POST без пути; действие infer
+  promise<Dict> infer(InferInputDto body) { return this.inference.infer(body); }
+}

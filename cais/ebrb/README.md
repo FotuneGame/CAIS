@@ -4,14 +4,14 @@
 
 | Шаг | Что делается | Модуль |
 |---|---|---|
-| 1. Извлечение | LLM извлекает `{(Aᵢ, vᵢ, cᵢ)}` по схеме атрибутов, в контексте — проверенные факты | `extraction` |
-| 2. Проверка схемы | тип, диапазон, обязательные и лишние атрибуты; ошибка — `REFINE` | `validation` |
-| 3. План | действие из списка действий (или переданное `action`) | `plan` |
-| 4. Сходство | `S̃ᵢᵏ = cᵢ · Sᵢᵏ`, `S = 1 − √(Σ(α − αᵏ)² / 2)` | `similarity` |
-| 5. Активация | `ωₖ = ρₖ · θₖ Π S̃^δ̄ / Σ θₗ Π S̃^δ̄`, `δ̄ = δ / max δ` | `activation` |
-| 6. Агрегация | аналитический ER → `{β₁…β_N, β_Θ}`, убеждения × полнота `Σcᵢ / |Aₖ|` | `reasoning` |
-| 7. Конфликт | `C = Σ ωₖωₗ(1 − cos(βₖ, βₗ)) / Σ ωₖωₗ` | `conflict` |
-| 8. Решение | `APPROVE` — `β_max ≥ τ_B`, `β_Θ ≤ τ_Θ`, `C ≤ τ_C`, действие безопасно (+ объяснение LLM); `REFINE` — `β_Θ > τ_Θ` или `C > τ_C`; иначе `ESCALATE` | `policy`, `explain` |
+| 1. Извлечение | LLM извлекает `{(Aᵢ, vᵢ, cᵢ)}` по схеме атрибутов, в контексте — проверенные факты | `inference/pipeline` |
+| 2. Проверка схемы | тип, диапазон, обязательные и лишние атрибуты; ошибка — `REFINE` | `inference/pipeline` |
+| 3. План | действие из списка действий (или переданное `action`) | `inference/pipeline` |
+| 4. Сходство | `S̃ᵢᵏ = cᵢ · Sᵢᵏ`, `S = 1 − √(Σ(α − αᵏ)² / 2)` | `inference/evidence` |
+| 5. Активация | `ωₖ = ρₖ · θₖ Π S̃^δ̄ / Σ θₗ Π S̃^δ̄`, `δ̄ = δ / max δ` | `inference/evidence` |
+| 6. Агрегация | аналитический ER → `{β₁…β_N, β_Θ}`, убеждения × полнота `Σcᵢ / |Aₖ|` | `inference/evidence` |
+| 7. Конфликт | `C = Σ ωₖωₗ(1 − cos(βₖ, βₗ)) / Σ ωₖωₗ` | `inference/evidence` |
+| 8. Решение | `APPROVE` — `β_max ≥ τ_B`, `β_Θ ≤ τ_Θ`, `C ≤ τ_C`, действие безопасно (+ объяснение LLM); `REFINE` — `β_Θ > τ_Θ` или `C > τ_C`; иначе `ESCALATE` | `inference/pipeline` |
 
 | Порог | Переменная | По умолчанию |
 |---|---|---|
@@ -32,8 +32,7 @@
 
 ## Команды
 
-- Для запуска с документацией на http://localhost:3000/docs: `AUTH_DISABLED=true npm start`
-- Для тестов и проверки кода: `npm test`, `npm run lint`
+- Для компиляции и запуска: [cais/README.md](../README.md#команды)
 - Для проброса из кластера: `kubectl port-forward -n app-dev svc/ebrb 3004:80`
 - Для загрузки примера базы: `curl -s localhost:3004/base -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d @examples/base.json`
 - Для вывода: `curl -s localhost:3004/infer -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"input":"удалить папку /etc"}'`

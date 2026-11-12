@@ -1,0 +1,44 @@
+{
+  "about": "TypeORM: записи и таблицы PostgreSQL",
+  "language": "typescript",
+  "mentions": [
+    "typeorm",
+    "таблиц",
+    "postgres",
+    "базы",
+    "базу",
+    "база",
+    "сущност"
+  ],
+  "packages": {
+    "typeorm": {
+      "version": "^1.1.2",
+      "url": "https://registry.npmjs.org/typeorm",
+      "about": "TypeORM: записи и таблицы PostgreSQL",
+      "requires": [
+        "pg"
+      ]
+    },
+    "@nestjs/typeorm": {
+      "version": "^12.0.3",
+      "url": "https://registry.npmjs.org/@nestjs/typeorm",
+      "about": "TypeORM: записи и таблицы PostgreSQL",
+      "requires": [
+        "typeorm",
+        "pg"
+      ]
+    },
+    "pg": {
+      "version": "^8.23.1",
+      "url": "https://registry.npmjs.org/pg",
+      "about": "драйвер PostgreSQL для typeorm; сам не импортируется"
+    }
+  },
+  "rules": [
+    "Сущность базы данных — запись таблицы; имя таблицы — в комментарии; каждое поле — колонка → @Entity('таблица') из typeorm; колонки по типу поля: number из int — @Column('int'), из float и double — @Column('float'), string — @Column('text'), boolean — @Column('boolean'), Date — @Column('timestamptz'), объекты и массивы — @Column('jsonb'); необязательное поле — nullable: true; значение по умолчанию — default; в комментарии поля: «ключ» — @PrimaryGeneratedColumn(), «идентификатор» — @PrimaryColumn(), «uuid» — тип колонки 'uuid', «уникально» — unique: true, «создано» — @CreateDateColumn({ type: 'timestamptz' }), «изменено» — @UpdateDateColumn({ type: 'timestamptz' })",
+    "Хранилище записей класса E — Repository<E> из typeorm; зависимость: constructor(@InjectRepository(E) private readonly имя: Repository<E>) из @nestjs/typeorm; условия поиска — ILike, In из typeorm.",
+    "Модуль с таблицами записей A, B: в imports @Module — TypeOrmModule.forFeature([A, B]) из @nestjs/typeorm, в exports — TypeOrmModule.",
+    "Модуль с подключением базы: в imports @Module — TypeOrmModule.forRoot({ type: 'postgres', ..., autoLoadEntities: true, synchronize: true, retryAttempts: 3, retryDelay: 3000 }) из @nestjs/typeorm; параметры — в комментарии.",
+    "Произвольный запрос к базе — DataSource из typeorm: await dataSource.query('SELECT 1')."
+  ]
+}

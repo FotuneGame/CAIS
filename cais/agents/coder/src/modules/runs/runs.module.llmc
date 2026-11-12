@@ -1,0 +1,8 @@
+import "../agent/agent.module";
+import "./entity/run.entity";
+import "./runs.controller";
+import "./runs.service";
+import "../../shared/core/types/roles.types";
+
+// таблицы — RunEntity; imports — AgentModule; controllers — RunsController; providers — RunsService
+export virtual class RunsModule : IModule {}

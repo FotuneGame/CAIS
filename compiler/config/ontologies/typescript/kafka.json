@@ -1,0 +1,22 @@
+{
+  "about": "Kafka: отправка и чтение сообщений",
+  "language": "typescript",
+  "mentions": [
+    "kafka",
+    "шин",
+    "топик"
+  ],
+  "packages": {
+    "kafkajs": {
+      "version": "^2.2.4",
+      "url": "https://registry.npmjs.org/kafkajs",
+      "about": "Kafka: отправка и чтение сообщений"
+    }
+  },
+  "rules": [
+    "KafkaClient — клиент Kafka → Kafka из kafkajs: new Kafka({ clientId, brokers, logLevel: logLevel.WARN })",
+    "KafkaProducer — отправитель сообщений → Producer из kafkajs: kafka.producer({ allowAutoTopicCreation: true }), connect(), send({ topic, messages: [{ value }] }), disconnect()",
+    "KafkaConsumer — читатель сообщений → Consumer из kafkajs: kafka.consumer({ groupId }), connect(), subscribe({ topic, fromBeginning: true }), run({ eachMessage: async ({ message }) => ... }), disconnect()",
+    "KafkaAdmin — управление темами → kafka.admin(): connect(), createTopics({ topics: [{ topic, configEntries }], waitForLeaders: true }), disconnect()"
+  ]
+}

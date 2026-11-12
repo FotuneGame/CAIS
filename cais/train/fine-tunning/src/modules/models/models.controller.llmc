@@ -1,0 +1,17 @@
+import "./models.service";
+import "../storage/storage.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Без пути
+export virtual class ModelsController : IController {
+  ModelsService models;
+  StorageService storage;
+  // GET datasets
+  virtual promise<Dict> datasets();
+  // { bases: файлы папки storage.modelsDir() с расширением .gguf, кроме путей, начинающихся с «.work/» }
+  // GET bases
+  virtual promise<Dict> bases();
+  // GET models
+  virtual promise<Dict> list();
+}

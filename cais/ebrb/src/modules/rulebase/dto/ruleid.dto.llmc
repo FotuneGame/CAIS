@@ -1,0 +1,5 @@
+import "../../../shared/core/types/roles.types";
+export virtual class RuleIdDto : IDto {
+  // шаблон ^[a-z][a-z0-9_]{1,49}$
+  string id;
+}

@@ -1,0 +1,17 @@
+import "../apriori/constants/apriori.constants";
+import "../apriori/types/observed.types";
+import "../events/types/event.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class ObservationsService : IService {
+  // Факторы события: violation — type 'violation'; injection — type 'injection';
+  // blocked_action — шаг с decision не 'ALLOW'; slow_step — шаг с durationMs больше SLOW_STEP_MS;
+  // failed_run — run со status 'failed'; failed_job — job со status 'failed';
+  // escalation — decision со значением 'ESCALATE'.
+  virtual string[] factors(Event event);
+  // Наблюдение — задача (run) или минута агента («<agent>@<первые 16 символов time>»): объединение факторов событий.
+  // factors — violation, blocked_action, failed_run, injection, slow_step, escalation, failed_job
+  virtual Observed fromEvents(Event[] events);
+  virtual Observed fromBinary(Dict[] rows);
+}

@@ -1,0 +1,21 @@
+import "../../config/llama.config";
+import "../train/types/finetuneoptions.types";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class LlamaService : IService {
+  LlamaConfig config;
+  // Запустить <config.binDir>/<binary> через launch с cwd и окружением процесса плюс LD_LIBRARY_PATH = config.binDir.
+  // Весь вывод (stdout и stderr) копить, храня последние 20000 символов; каждую строку вывода, где без учёта
+  // регистра есть epoch, loss, PPL, quantiz или error, передать в log({ [binary]: строка без пробелов по краям }).
+  // Код завершения 0 — вернуть накопленный вывод; иначе ошибка «<binary>: код <код>» и с новой строки
+  // последние 500 символов вывода.
+  virtual promise<string> run(string binary, string[] args, string cwd, Handler log);
+  // Аргументы — config.finetuneArgs по пробелам, где {ключ} заменён значением из options, а также
+  // gpuLayers и threads из config (нет значения — пусто); запустить llama-finetune в папке cwd
+  virtual promise<string> finetune(FinetuneOptions options, string cwd, Handler log);
+  virtual promise<string> quantize(string input, string output, string type, Handler log);
+  // Запустить llama-perplexity с аргументами -m model -f data -c context -t config.threads в папке модели;
+  // вернуть последнее число из вывода после «PPL = », а если его нет — NaN
+  virtual promise<double> perplexity(string model, string data, int context, Handler log);
+}

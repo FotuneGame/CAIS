@@ -1,0 +1,26 @@
+import "../information/information.service";
+import "../macie/constants/macie.constants";
+import "../macie/macie.functions";
+import "../macie/types/causalmodel.types";
+import "../macie/types/history.types";
+import "../outcome/outcome.service";
+import "../random/random.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class CausalService : IService {
+  OutcomeService outcome;
+  InformationService information;
+  RandomService random;
+  virtual string key(int[] parents, string state, string[] previous);
+  // actions[i] — пространство действий агента i: IDLE и все его действия в истории, без повторов.
+  // Модель исхода — outcome.fit(history, actions).
+  // parents[j] — агенты i ≠ j, чьё действие на шаге t−1 зависимо с действием j на шаге t
+  // (information.dependent); каждое такое i даёт ребро [i, j].
+  // marginals[j] — частоты действий агента j (information.counts).
+  // conditionals[j] — Map: key(parents[j], состояние шага t, действия шага t−1) → частоты действий j на шаге t.
+  virtual CausalModel fit(History history);
+  // Действие агента j по условному распределению для key(parents[j], state, previous);
+  // нет такого условия — по marginals[j]; выбор — random.sample
+  virtual string sample(CausalModel model, int j, string state, string[] previous, Handler rng);
+}

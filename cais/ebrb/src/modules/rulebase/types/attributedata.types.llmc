@@ -1,0 +1,7 @@
+export class AttributeData {
+  string name;
+  string description;
+  double weight;
+  double[] referential;
+  bool required;
+}

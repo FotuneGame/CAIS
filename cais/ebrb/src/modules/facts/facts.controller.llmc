@@ -1,0 +1,28 @@
+import "./dto/factinput.dto";
+import "./dto/factsearch.dto";
+import "./dto/facttitle.dto";
+import "./facts.service";
+import "./types/added.types";
+import "./types/factslist.types";
+import "./types/found.types";
+import "./types/imported.types";
+import "./types/reviewed.types";
+import "../rulebase/entity/action.entity";
+import "../../shared/core/types/roles.types";
+
+// Путь facts
+export virtual class FactsController : IController {
+  FactsService facts;
+  // GET без пути
+  promise<FactsList> list() { return this.facts.list(); }
+  // POST без пути; действие facts.add
+  promise<Added> add(FactInputDto body) { return this.facts.add(body.title, body.text); }
+  // POST import
+  promise<Imported> importFiles() { return this.facts.importFiles(); }
+  // POST search; действие facts.search
+  promise<Found> search(FactSearchDto body) {
+    return this.facts.search(body.query, body.limit, body.reviewedOnly);
+  }
+  // POST review
+  promise<Reviewed> review(FactTitleDto body) { return this.facts.review(body.title); }
+}

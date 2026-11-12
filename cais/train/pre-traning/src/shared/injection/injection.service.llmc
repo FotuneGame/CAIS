@@ -1,0 +1,16 @@
+import "../core/core.functions";
+import "../core/types/roles.types";
+
+export virtual class InjectionService : IService {
+  // Вернуть без повторов названия признаков, чьи регулярные выражения (без учёта регистра) найдены в тексте:
+  // «отмена инструкций»: (ignore|disregard|forget)\s+(all\s+|the\s+)?(previous|above|prior|earlier)
+  // «отмена инструкций»: (игнорир|забудь|отмени)\S*\s+(все\s+)?(предыдущ|прошл|выше)
+  // «подмена роли»: (you are now|act as|ты теперь|веди себя как)
+  // «системный промпт»: (system|developer)\s+(prompt|message)|системн\S*\s+(промпт|инструкц)
+  // «служебная разметка»: <\|im_(start|end)\|>|<\/?(system|assistant|data)>
+  // «вывод секретов»: (reveal|print|show|покажи|выведи)\s.{0,30}(secret|password|token|парол|токен|секрет)
+  virtual string[] findings(string text);
+  // Убрать из текста теги <data> и </data> (без учёта регистра), обрезать до limit символов
+  // и вернуть строку из трёх строк: <data>, текст, </data>
+  virtual string asData(string text, int limit = 4000);
+}

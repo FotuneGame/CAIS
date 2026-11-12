@@ -1,0 +1,14 @@
+import "./constants/macie.constants";
+
+export string state(double previousReward) {
+  if (previousReward > NEUTRAL) { return "positive"; }
+  return previousReward < -NEUTRAL ? "negative" : "neutral";
+}
+
+export long factorial(int n) {
+  return n <= 1 ? 1 : n * factorial(n - 1);
+}
+
+export double coalitionWeight(int size, int n) {
+  return (double) (factorial(size) * factorial(n - size - 1)) / factorial(n);
+}

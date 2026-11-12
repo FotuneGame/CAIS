@@ -1,0 +1,13 @@
+import "../events/types/event.types";
+import "../stats/stats.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class EmergenceService : IService {
+  StatsService stats;
+  // Шаги — события type 'step' с tool. toolDiversity — энтропия инструментов всех шагов;
+  // specialization — max(0, энтропия группы − средняя энтропия инструментов по агентам);
+  // synchrony — доля минут (первые 16 символов time), когда активны несколько агентов, среди всех минут;
+  // agents — число агентов. Числа — с тремя знаками после запятой.
+  virtual Dict measure(Event[] events);
+}

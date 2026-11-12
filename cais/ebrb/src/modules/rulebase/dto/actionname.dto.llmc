@@ -1,0 +1,5 @@
+import "../../../shared/core/types/roles.types";
+export virtual class ActionNameDto : IDto {
+  // шаблон ^[\\w.:-]{1,100}$
+  string name;
+}

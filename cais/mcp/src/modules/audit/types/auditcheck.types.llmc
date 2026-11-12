@@ -1,0 +1,5 @@
+export class AuditCheck {
+  int records;
+  bool valid;
+  int? brokenAt;
+}

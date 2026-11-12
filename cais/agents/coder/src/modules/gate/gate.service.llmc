@@ -1,0 +1,19 @@
+import "../agent/types/action.types";
+import "../agent/types/verdict.types";
+import "../sandbox/types/tool.types";
+import "../../shared/bus/client.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class GateService : IService {
+  BusClientService bus;
+  // «Агент-программист вызывает инструмент <action.tool> (<tool.description>) в своей песочнице
+  // с аргументами <JSON аргументов, первые 4000 символов>»
+  virtual string describe(Action action, Tool tool);
+  // Если !bus.enabled() — { decision: 'ALLOW', reason: 'EBRB не подключён: нет KAFKA_BROKERS' }.
+  // ответ = await bus.request('ebrb', 'infer', { input: describe(action, tool), action: action.tool });
+  // поля ответа: decision, hypothesis, reason, explanation.
+  // decision не 'APPROVE' — { decision, reason }; hypothesis 'ALLOW' — { decision: 'ALLOW', reason: explanation или reason };
+  // иначе { decision: hypothesis или 'BLOCK', reason: explanation или reason }.
+  // Ошибка запроса — { decision: 'ESCALATE', reason: «EBRB недоступен: <сообщение>» }.
+  virtual promise<Verdict> check(Action action, Tool tool);
+}

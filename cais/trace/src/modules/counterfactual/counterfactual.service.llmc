@@ -1,0 +1,30 @@
+import "../causal/causal.service";
+import "../macie/macie.functions";
+import "../macie/types/causalmodel.types";
+import "../macie/types/history.types";
+import "../outcome/outcome.service";
+import "../random/random.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+export virtual class CounterfactualService : IService {
+  CausalService causal;
+  OutcomeService outcome;
+  RandomService random;
+  virtual double[] factual(History history);
+  // Одна контрфактическая траектория наград при do(a_i = π₀) для агентов из replaced (Set<number>):
+  // состояние начинается с состояния первого шага; на каждом шаге заменённый агент берёт случайное действие
+  // своего пространства (random.pick); остальные сохраняют фактическое действие, а если состояние отличается
+  // от фактического или у родителя изменилось прошлое действие (и шаг не первый) — берут causal.sample.
+  // Награда — outcome.reward(model, t, состояние, действия); следующее состояние — state(награда).
+  virtual double[] simulate(History history, CausalModel model, Any replaced, Handler rng);
+  virtual double[][] runs(History history, CausalModel model, Any replaced, int k, Handler rng);
+  virtual double total(double[] rewards);
+  virtual double mean(double[][] runs);
+  virtual double[] cumulative(double[] rewards);
+  virtual string key(int[] members);
+  // Функция исхода коалиции Y(C): (members: number[]) => number. Заменяются агенты вне коалиции;
+  // исход — средний по k траекториям (одна траектория, если заменять некого).
+  // Значения запоминаются по key(members) в known (Map<string, number>, по умолчанию пустой).
+  virtual Handler outcomes(History history, CausalModel model, int k, Handler rng, Any known = null);
+}

@@ -1,0 +1,12 @@
+import "../../config/app.config";
+import "../../modules/clickhouse/clickhouse.service";
+import "../core/types/roles.types";
+import "../core/types/base.types";
+
+export virtual class HealthService : IService {
+  AppConfig app;
+  ClickhouseService clickhouse;
+  // Вернуть словарь: имя проверки и её результат.
+  // clickhouse: clickhouse.exec('SELECT 1').
+  virtual promise<HashMap<string, string>> check();
+}

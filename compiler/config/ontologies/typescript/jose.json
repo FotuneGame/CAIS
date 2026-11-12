@@ -1,0 +1,20 @@
+{
+  "about": "Проверка токенов JWT",
+  "language": "typescript",
+  "mentions": [
+    "jwt",
+    "токен"
+  ],
+  "packages": {
+    "jose": {
+      "version": "^6.2.15",
+      "url": "https://registry.npmjs.org/jose",
+      "about": "Проверка токенов JWT"
+    }
+  },
+  "rules": [
+    "verifyToken — verifyToken(токен, ключи, издатели) — проверить подпись и издателя, вернуть содержимое → (await jwtVerify(токен, ключи, { issuer: издатели })).payload из jose",
+    "Token — содержимое проверенного токена доступа: sub, azp и другие поля → JWTPayload из jose (import type)",
+    "KeySet — набор открытых ключей издателя токенов → createRemoteJWKSet(new URL(адрес)) из jose; тип ReturnType<typeof createRemoteJWKSet>"
+  ]
+}

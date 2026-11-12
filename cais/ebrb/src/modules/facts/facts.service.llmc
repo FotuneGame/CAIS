@@ -1,0 +1,37 @@
+import "../../config/app.config";
+import "../chunk/chunk.service";
+import "./types/added.types";
+import "./types/factslist.types";
+import "./types/found.types";
+import "./types/imported.types";
+import "./types/reviewed.types";
+import "../store/store.service";
+import "../../shared/injection/injection.service";
+import "../../shared/kafka/kafka.service";
+import "../../shared/core/types/roles.types";
+
+export virtual class FactsService : IService {
+  StoreService store;
+  ChunkService chunks;
+  InjectionService injection;
+  KafkaService kafka;
+  AppConfig app;
+  // признаки = injection.findings(title, с новой строки text); префикс — первые 16 символов sha256(title).
+  // Факты: для части i из chunks.split(text) — { id: «<префикс>-<i>», title, text: часть,
+  // injection: есть признаки документа или признаки части, reviewed: false }.
+  // await store.replace(title, факты); kafka.publish({ type: 'fact', title, chunks: число частей, findings: признаки });
+  // вернуть { title, chunks, reviewed: false, injection: признаки }.
+  virtual promise<Added> add(string title, string text);
+  // limit по умолчанию 5, reviewedOnly — false; hits = await store.search(...);
+  // kafka.publish({ type: 'search', hits: число }); вернуть { hits }
+  virtual promise<Found> search(string query, int? limit = null, bool? reviewedOnly = null);
+  // число = await store.review(title); ноль — ошибка NotFound «нет фактов <title>»;
+  // вернуть { title, chunks: число, reviewed: true }
+  virtual promise<Reviewed> review(string title);
+  virtual promise<FactsList> list();
+  // Папка <app.dataPath>/facts (создать, если нет); рекурсивно взять файлы с расширениями
+  // .md, .txt, .js, .ts, .json, .yaml, .yml, .html, .css, .py, .sh.
+  // Каждый файл добавить через add(путь относительно папки, содержимое); blocked — число файлов
+  // с признаками инъекции; вернуть { documents: число файлов, blocked, reviewed: false }.
+  virtual promise<Imported> importFiles();
+}

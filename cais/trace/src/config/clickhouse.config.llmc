@@ -1,0 +1,11 @@
+import "../shared/core/types/roles.types";
+export virtual class ClickhouseConfig : IConfig {
+  // окружение CLICKHOUSE_URL, по умолчанию ""
+  const string url;
+  // окружение CLICKHOUSE_USER, по умолчанию "default"
+  const string username;
+  // окружение CLICKHOUSE_PASSWORD, по умолчанию ""
+  const string password;
+  // окружение CLICKHOUSE_DB, по умолчанию "default"
+  const string database;
+}

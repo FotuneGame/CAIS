@@ -1,0 +1,24 @@
+{
+  "about": "Сервер Model Context Protocol",
+  "language": "typescript",
+  "mentions": [
+    "mcp"
+  ],
+  "packages": {
+    "@modelcontextprotocol/sdk": {
+      "version": "^1.32.2",
+      "url": "https://registry.npmjs.org/@modelcontextprotocol/sdk",
+      "about": "Сервер Model Context Protocol"
+    },
+    "zod": {
+      "version": "^4.6.7",
+      "url": "https://registry.npmjs.org/zod",
+      "about": "Сервер Model Context Protocol"
+    }
+  },
+  "rules": [
+    "McpServer — сервер MCP: регистрация инструментов → McpServer из @modelcontextprotocol/sdk/server/mcp.js: new McpServer({ name, version }); server.registerTool(имя, { description, inputSchema }, обработчик); обработчик возвращает CallToolResult из @modelcontextprotocol/sdk/types.js: { content: [{ type: 'text', text }] }, при ошибке ещё isError: true",
+    "McpTransport — транспорт MCP поверх одного запроса HTTP → StreamableHTTPServerTransport из @modelcontextprotocol/sdk/server/streamableHttp.js: new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true }); await server.connect(transport); await transport.handleRequest(req, res, body); при закрытии ответа — transport.close() и server.close()",
+    "Schema — схема аргументов инструмента → z из zod: z.string().max(n), z.number().int().min(a).max(b), .optional()"
+  ]
+}

@@ -35,3 +35,14 @@ volumes/app/*/train/*/*
 .$Services.drawio.bkp
 
 screens
+# Компилятор LLMC: бинарник и результаты компиляции
+compiler/llmc
+compiler/llmc.exe
+build/
+old/
+
+# Настройки LLM компилятора (токены)
+compiler/.env
+
+# Пакет расширения VS Code
+compiler/addons/vscode/llmc.vsix

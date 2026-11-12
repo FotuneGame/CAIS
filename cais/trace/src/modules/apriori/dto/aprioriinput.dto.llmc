@@ -1,0 +1,16 @@
+import "../../../shared/core/types/roles.types";
+import "../../../shared/core/types/base.types";
+export virtual class AprioriInputDto : IDto {
+  // от 1 до 10080
+  int? minutes;
+  // от 0 до 1
+  double? minSupport;
+  // от 1 до 6
+  int? maxSize;
+  // от 1 до 20
+  int? clusters;
+  // длина от 0 до 100000
+  Dict[]? observations;
+  string[][]? expertPairs;
+  double[]? weights;
+}

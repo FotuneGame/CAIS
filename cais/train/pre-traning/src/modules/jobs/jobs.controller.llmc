@@ -1,0 +1,27 @@
+import "./jobs.service";
+import "../train/dto/jobid.dto";
+import "../train/dto/jobstart.dto";
+import "../train/entity/job.entity";
+import "../train/train.service";
+import "../../shared/core/core.functions";
+import "../../shared/keycloak/keycloak.service";
+import "../../shared/core/types/roles.types";
+import "../../shared/core/types/base.types";
+
+// Путь jobs
+export virtual class JobsController : IController {
+  TrainService train;
+  JobsService jobs;
+  KeycloakService keycloak;
+  // POST без пути; user — вызывающий
+  // user — Token: JWTPayload из jose (import type)
+  virtual promise<JobEntity> start(JobStartDto body, Any user);
+  // POST status; user — вызывающий
+  // user — Token: JWTPayload из jose (import type)
+  promise<JobEntity> status(JobIdDto body, Any user) {
+    return this.jobs.status(body.id, this.keycloak.owner(user));
+  }
+  // GET без пути; user — вызывающий
+  // user — Token: JWTPayload из jose (import type)
+  virtual promise<Dict> list(Any user);
+}
